@@ -5,11 +5,13 @@
 //  Created by Tjark Derlien on 31.03.05.
 //  Copyright 2005 Tjark Derlien. All rights reserved.
 //
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-04.
 
 #import "SelectionListController.h"
 #import "FileSystemDoc.h"
 #import "FileKindsPopupController.h"
-#import <OmniFoundation/NSString-OFExtensions.h>
+#import "OmniCompatibility.h"
 #import "Timing.h"
 
 @interface SelectionListController(Privat)

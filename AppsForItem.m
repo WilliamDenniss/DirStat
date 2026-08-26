@@ -5,9 +5,10 @@
 //  Created by Tjark Derlien on 20.01.06.
 //  Copyright 2006 Tjark Derlien. All rights reserved.
 //
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-04.
 
 #import "AppsForItem.h"
-#import <OmniFoundation/NSMutableArray-OFExtensions.h>
 #import "NSURL-Extensions.h"
 
 @interface AppsForItem(Private)
@@ -83,7 +84,17 @@
 			}
 		}
 		
-		[_additionalAppURLs sortOnAttribute: @selector(name) usingSelector: @selector(caseInsensitiveCompare:)];
+		[_additionalAppURLs sortUsingComparator: ^NSComparisonResult(NSURL *leftURL, NSURL *rightURL) {
+			NSString *leftName = [leftURL name];
+			NSString *rightName = [rightURL name];
+
+			if ( leftName == nil )
+				return rightName == nil ? NSOrderedSame : NSOrderedDescending;
+			if ( rightName == nil )
+				return NSOrderedAscending;
+
+			return [leftName caseInsensitiveCompare: rightName];
+		}];
 	}
 	
 	return _additionalAppURLs;
@@ -115,9 +126,13 @@
 	
 	if ( checkDefApp && [appURL isEqualToURL: [self defaultAppURL]] )
 		return NO;
-	
-	BOOL isDIX = [[appURL name] isEqualToString: @"Disk Inventory X.app"];
-	BOOL isFinder = [[appURL name] isEqualToString: @"Finder.app"];
+
+	NSString *appName = [appURL name];
+	if ( [appName length] == 0 )
+		return NO;
+
+	BOOL isDIX = [appName isEqualToString: @"Disk Inventory X.app"];
+	BOOL isFinder = [appName isEqualToString: @"Finder.app"];
 	
 	//filter out the Finder (for simple folders, the Finder is returned by "LSGetApplicationForItem" and "LSCopyApplicationURLsForURL")
 	//it would be better to identify the Finder by it's bundle identifier, but then we would have to load it's bundle (?)

@@ -1,5 +1,19 @@
 /* Prefs for Icon buttons - OmniAppKit is coded to look for Preferences.strings */
 
+/* Copyright 2026 The DirStat Authors.
+ * Modified 2026-09-04.
+ */
+
 "General" = "Général";
 "Treemap" = "Carte";
 "Finder Plugin" = "Plugin Finder";
+
+"Reset" = "Réinitialiser";
+"Cancel" = "Annuler";
+"Reset %@ preferences?" = "Réinitialiser les préférences « %@ » ?";
+"Only settings in this preference pane will return to their default values." = "Seuls les réglages de ce panneau de préférences retrouveront leurs valeurs par défaut.";
+"Reset all preferences?" = "Réinitialiser toutes les préférences ?";
+"All settings in these preference panes will return to their default values." = "Tous les réglages de ces panneaux de préférences retrouveront leurs valeurs par défaut.";
+"Reset all preferences and other settings?" = "Réinitialiser toutes les préférences et les autres réglages ?";
+"All preferences and other saved settings for this app, including window sizes and toolbars, will return to their default values." = "Toutes les préférences et les autres réglages enregistrés pour cette application, y compris les tailles des fenêtres et les barres d’outils, retrouveront leurs valeurs par défaut.";
+"Reset this pane. Hold Option to reset all panes, or Option-Shift to also reset other app settings." = "Réinitialiser ce panneau. Maintenez Option pour réinitialiser tous les panneaux, ou Option-Maj pour réinitialiser aussi les autres réglages de l’application.";

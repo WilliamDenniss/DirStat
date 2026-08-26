@@ -5,12 +5,14 @@
 //  Created by Steve Gehrman on Sat Jul 12 2003.
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-04.
 
+#import "DIXLocalization.h"
 #import "NTInfoView.h"
 #import "NTTitledInfoPair.h"
 #import "AppsForItem.h"
 #import "NSURL-Extensions.h"
-#import <CocoaTechStrings/NTLocalizedString.h>
 
 #pragma warning "ID3 support removed"
 //#import "NTID3Helper.h"
@@ -156,17 +158,17 @@
     
     if (_URL && [_URL stillExists])
     {
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Name:" table:@"preview"] info:[_URL cachedDisplayName]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Name:") info:[_URL cachedDisplayName]]];
         
         NSString *kindName = [_URL getCachedStringValue: NSURLLocalizedTypeDescriptionKey];
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Kind:" table:@"preview"] info:kindName]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Kind:") info:kindName]];
         
         if ([_URL isVolume] && ![_URL isLocalVolume])
         {
             NSURL *networkURL = nil;
             [_URL getResourceValue: &networkURL forKey: NSURLVolumeURLForRemountingKey error: nil];
             if ( networkURL != nil )
-                [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"URL:"] info: [networkURL absoluteString]]];
+                [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"URL:") info: [networkURL absoluteString]]];
         }
 
         [infoPairs addObjectsFromArray:[self sizePairs]];
@@ -177,9 +179,9 @@
             [dateFormatter setTimeStyle:NSDateFormatterMediumStyle];
             [dateFormatter setLocale:[NSLocale currentLocale]];
             
-            [infoPairs addObject:[NTTitledInfoPair infoPair: [NTLocalizedString localize:@"Modified:" table:@"preview"]
+            [infoPairs addObject:[NTTitledInfoPair infoPair: DIXLocalizedString(@"Modified:")
                                                        info: [dateFormatter stringFromDate:[_URL cachedModificationDate]]]];
-            [infoPairs addObject:[NTTitledInfoPair infoPair: [NTLocalizedString localize:@"Created:" table:@"preview"]
+            [infoPairs addObject:[NTTitledInfoPair infoPair: DIXLocalizedString(@"Created:")
                                                        info: [dateFormatter stringFromDate:[_URL cachedCreationDate]]]];
         }
         
@@ -187,11 +189,11 @@
         
         if ( attribs != nil )
         {
-            [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Owner:" table:@"preview"] info:[attribs fileOwnerAccountName]]];
-            [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Group:" table:@"preview"] info:[attribs  fileGroupOwnerAccountName]]];
+            [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Owner:") info:[attribs fileOwnerAccountName]]];
+            [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Group:") info:[attribs  fileGroupOwnerAccountName]]];
         }
         
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Permission:" table:@"preview"] info:[NTInfoView permissionStringForURL: _URL]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Permission:") info:[NTInfoView permissionStringForURL: _URL]]];
 
         {
             NSBundle *bundle = [NSBundle bundleWithURL:_URL];
@@ -219,11 +221,11 @@
                 }
                 
                 if (version && [version length])
-                    [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Version:" table:@"preview"] info:version]];
+                    [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Version:") info:version]];
             }
         }
         
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Path:" table:@"preview"] info:[_URL path]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Path:") info:[_URL path]]];
         
         // if alias or symbolic link - resolved:
         NSURL *resolvedURL = nil; //needed below
@@ -235,7 +237,7 @@
             {
                 resolvedURL = [NSURL fileURLWithPath:resolvedPath];
                 
-                [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Resolved:" table:@"preview"] info:resolvedPath]];
+                [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Resolved:") info:resolvedPath]];
             }
         }
  
@@ -248,7 +250,7 @@
             // if _URL is an application, LSCopyDefaultApplicationURLForURL(..) returns the app URL, so sort that out
             if (appURL != nil && ![appURL isEqualToURL: _URL])
             {
-                    [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Application:" table:@"preview"] info:[appURL displayName]]];
+                    [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Application:") info:[appURL displayName]]];
             }
         }
 #pragma warning "ID3 support disabled"
@@ -256,14 +258,14 @@
         if ([typeID isMP3])
         {
             NTID3Helper* helper = [NTID3Helper helperWithPath:[_desc path]];
-            [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"MP3:" table:@"preview"] info:[helper infoString]]];
+            [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"MP3:") info:[helper infoString]]];
         }
 */
 
         /*
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Format:" table:@"preview"] info:[_URL cachedVolumeFormatName]]];
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Mount Point:" table:@"preview"] info:[[volume mountPoint] path]]];
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Device:" table:@"preview"] info:[volume mountDevice]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Format:") info:[_URL cachedVolumeFormatName]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Mount Point:") info:[[volume mountPoint] path]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Device:") info:[volume mountDevice]]];
  */   }
     return infoPairs;
 }
@@ -275,17 +277,17 @@
     
     if (_URL && [_URL stillExists])
      {
-         [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Name:" table:@"preview"] info:[_URL cachedDisplayName]]];
+         [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Name:") info:[_URL cachedDisplayName]]];
          
          NSString *kindName = [_URL getCachedStringValue: NSURLLocalizedTypeDescriptionKey];
-         [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Kind:" table:@"preview"] info:kindName]];
+         [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Kind:") info:kindName]];
          
          if ([_URL isVolume] && ![_URL isLocalVolume])
          {
              NSURL *networkURL = nil;
              [_URL getResourceValue: &networkURL forKey: NSURLVolumeURLForRemountingKey error: nil];
              if ( networkURL != nil )
-                 [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"URL:"] info: [networkURL absoluteString]]];
+                 [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"URL:") info: [networkURL absoluteString]]];
          }
 
         
@@ -293,9 +295,9 @@
         
 #pragma warning "to be reimplemented using NSURL & co"
 /*
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Modified:" table:@"preview"] info:[[_desc modificationDate] dateString:kLongDate relative:NO]]];
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Created:" table:@"preview"] info:[[_desc creationDate] dateString:kLongDate relative:NO]]];
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Path:" table:@"preview"] info:[_desc path]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Modified:") info:[[_desc modificationDate] dateString:kLongDate relative:NO]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Created:") info:[[_desc creationDate] dateString:kLongDate relative:NO]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Path:") info:[_desc path]]];
         
          // if alias or symbolic link - resolved:
         if ([_desc isAlias])
@@ -303,7 +305,7 @@
             NTFileDesc* resolved = [_desc descResolveIfAlias];
             
             if (resolved)
-                [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Resolved:" table:@"preview"] info:[resolved path]]];
+                [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Resolved:") info:[resolved path]]];
         }
         
         // version
@@ -314,7 +316,7 @@
                 version = [_desc versionString];
             
             if (version && [version length])
-                [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Version:" table:@"preview"] info:version]];
+                [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Version:") info:version]];
         }
         
         // make sure the item is resolved (match the pref)
@@ -323,7 +325,7 @@
             NTFileDesc* appDesc = [descPref application];
             
             if ([appDesc isValid])
-                [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Application:" table:@"preview"] info:[appDesc displayName]]];
+                [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Application:") info:[appDesc displayName]]];
         }
 */
 #pragma warning "ID3 support removed"
@@ -332,7 +334,7 @@
        if ([typeID isMP3])
         {
             NTID3Helper* helper = [NTID3Helper helperWithPath:[_desc path]];
-            [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"MP3:" table:@"preview"] info:[helper infoString]]];
+            [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"MP3:") info:[helper infoString]]];
         }
         */
 
@@ -340,12 +342,12 @@
 /*
          NTVolume *volume = [_desc volume];
          
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Volume:" table:@"preview"] info:[[volume mountPoint] displayName]]];
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Capacity:" table:@"preview"] info:[[NTSizeFormatter sharedInstance] fileSize:[volume totalBytes]]]];
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Free:" table:@"preview"] info:[[NTSizeFormatter sharedInstance] fileSize:[volume freeBytes]]]];
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Format:" table:@"preview"] info:[volume fileSystemName]]];
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Mount Point:" table:@"preview"] info:[[volume mountPoint] path]]];
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Device:" table:@"preview"] info:[volume mountDevice]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Volume:") info:[[volume mountPoint] displayName]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Capacity:") info:[[NTSizeFormatter sharedInstance] fileSize:[volume totalBytes]]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Free:") info:[[NTSizeFormatter sharedInstance] fileSize:[volume freeBytes]]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Format:") info:[volume fileSystemName]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Mount Point:") info:[[volume mountPoint] path]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Device:") info:[volume mountDevice]]];
  */
     }
     
@@ -375,25 +377,25 @@
         if (dataSize)
         {
             [sizeResult appendString:@"\n"];
-            [sizeResult appendString:[NTLocalizedString localize:@"data:" table:@"preview"]];
+            [sizeResult appendString:DIXLocalizedString(@"data:")];
             [sizeResult appendString:[numFormatter stringForObjectValue:[NSNumber numberWithUnsignedLongLong:dataSize]]];
-            [sizeResult appendString:[NTLocalizedString localize:@" bytes" table:@"preview"]];
+            [sizeResult appendString:DIXLocalizedString(@" bytes")];
         }
         
         if (rsrcSize)
         {
             [sizeResult appendString:@"\n"];
-            [sizeResult appendString:[NTLocalizedString localize:@"rsrc:" table:@"preview"]];
+            [sizeResult appendString:DIXLocalizedString(@"rsrc:")];
             [sizeResult appendString:[numFormatter stringForObjectValue:[NSNumber numberWithUnsignedLongLong:rsrcSize]]];
-            [sizeResult appendString:[NTLocalizedString localize:@" bytes" table:@"preview"]];
+            [sizeResult appendString:DIXLocalizedString(@" bytes")];
         }
         
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Size:" table:@"preview"] info:sizeResult]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Size:") info:sizeResult]];
     }
     else if ([_desc isVolume])
     {
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Capacity:" table:@"preview"] info:[[NTSizeFormatter sharedInstance] fileSize:[NTFileDesc volumeTotalBytes:_desc]]]];
-        [infoPairs addObject:[NTTitledInfoPair infoPair:[NTLocalizedString localize:@"Free:" table:@"preview"] info:[[NTSizeFormatter sharedInstance] fileSize:[NTFileDesc volumeFreeBytes:_desc]]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Capacity:") info:[[NTSizeFormatter sharedInstance] fileSize:[NTFileDesc volumeTotalBytes:_desc]]]];
+        [infoPairs addObject:[NTTitledInfoPair infoPair:DIXLocalizedString(@"Free:") info:[[NTSizeFormatter sharedInstance] fileSize:[NTFileDesc volumeFreeBytes:_desc]]]];
     }
     else // is folder
     {
@@ -415,7 +417,7 @@
         [formatter setAllowsFloats:NO];
         [formatter setAttributedStringForZero:[[[NSAttributedString alloc] initWithString:@"0"] autorelease]];
         
-        _calculatedFolderNumItems = [[[formatter stringForObjectValue:totalValence] stringByAppendingString:[NTLocalizedString localize:@" items" table:@"preview"]] retain];
+        _calculatedFolderNumItems = [[[formatter stringForObjectValue:totalValence] stringByAppendingString:DIXLocalizedString(@" items")] retain];
     }
 }
 

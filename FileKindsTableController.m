@@ -5,9 +5,11 @@
 //  Created by Tjark Derlien on Mon Sep 29 2003.
 //  Copyright (c) 2003 Tjark Derlien. All rights reserved.
 //
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-04.
 
 #import "FileKindsTableController.h"
-#import <OmniAppKit/NSTableView-OAExtensions.h>
+#import "OmniCompatibility.h"
 #import <TreeMapView/TMVCushionRenderer.h>
 #import <TreeMapView/NSBitmapImageRep-CreationExtensions.h>
 #import "Preferences.h"

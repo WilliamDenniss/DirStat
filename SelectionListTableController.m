@@ -5,9 +5,11 @@
 //  Created by Tjark Derlien on 25.03.05.
 //  Copyright 2005 Tjark Derlien. All rights reserved.
 //
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-04.
 
 #import "SelectionListTableController.h"
-#import <OmniAppKit/NSTableView-OAExtensions.h>
+#import "OmniCompatibility.h"
 #import "ImageAndTextCell.h"
 
 @interface SelectionListTableController(Privat)

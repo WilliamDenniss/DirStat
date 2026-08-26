@@ -7,9 +7,11 @@
  *
  */
 
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-04.
+
 #include "Preferences.h"
-#import <OmniFoundation/NSDictionary-OFExtensions.h>
-#import <OmniFoundation/NSMutableDictionary-OFExtensions.h>
+#import "OmniCompatibility.h"
 
 //keys for preference values
 NSString *ShowPackageContents			= @"ShowPackageContents";

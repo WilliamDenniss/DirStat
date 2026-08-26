@@ -5,10 +5,12 @@
 //  Created by Tjark Derlien on Mon Sep 29 2003.
 //  Copyright (c) 2003 Tjark Derlien. All rights reserved.
 //
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-04.
 
 #import "FSItem.h"
 #import "NSURL-Extensions.h"
-#import <OmniFoundation/NSMutableArray-OFExtensions.h>
+#import "OmniCompatibility.h"
 #import "NTFilePasteboardSource.h"
 
 //for debugging and logging purposes
@@ -340,8 +342,14 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
 	
 	[newChild setParent: self];
 	
-	//insert child sorted by size
-	[_childs insertObject: newChild inArraySortedUsingSelector: @selector(compareSizeDescendingly:)];
+	// Keep children sorted by descending size.
+	NSUInteger insertionIndex = [_childs indexOfObject:newChild
+									inSortedRange:NSMakeRange(0, [_childs count])
+										  options:NSBinarySearchingInsertionIndex
+									  usingComparator:^NSComparisonResult(FSItem *left, FSItem *right) {
+		return [left compareSizeDescendingly:right];
+	}];
+	[_childs insertObject:newChild atIndex:insertionIndex];
 	
 	[self setSizeValue: [self sizeValue] + [newChild sizeValue]];
 	
@@ -1141,4 +1149,3 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
 }
 
 @end
-

@@ -1,10 +1,13 @@
 /* MainWindowController */
 
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-04.
+
 #import <Cocoa/Cocoa.h>
 #import "FileSystemDoc.h"
 #import <TreeMapView/TreeMapView.h>
 #import "OAToolbarWindowControllerEx.h"
-#import <OmniAppKit/OASplitView.h>
+#import "OmniCompatibility.h"
 
 @interface MainWindowController : OAToolbarWindowControllerEx
 {

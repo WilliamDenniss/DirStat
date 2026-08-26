@@ -1,5 +1,19 @@
 /* Prefs for Icon buttons - OmniAppKit is coded to look for Preferences.strings */
 
+/* Copyright 2026 The DirStat Authors.
+ * Modified 2026-09-04.
+ */
+
 "General" = "General";
 "Treemap" = "Treemap";
 "Finder Plugin" = "Finder Plugin";
+
+"Reset" = "Reset";
+"Cancel" = "Cancel";
+"Reset %@ preferences?" = "Reset %@ preferences?";
+"Only settings in this preference pane will return to their default values." = "Only settings in this preference pane will return to their default values.";
+"Reset all preferences?" = "Reset all preferences?";
+"All settings in these preference panes will return to their default values." = "All settings in these preference panes will return to their default values.";
+"Reset all preferences and other settings?" = "Reset all preferences and other settings?";
+"All preferences and other saved settings for this app, including window sizes and toolbars, will return to their default values." = "All preferences and other saved settings for this app, including window sizes and toolbars, will return to their default values.";
+"Reset this pane. Hold Option to reset all panes, or Option-Shift to also reset other app settings." = "Reset this pane. Hold Option to reset all panes, or Option-Shift to also reset other app settings.";

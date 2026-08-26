@@ -5,7 +5,10 @@
 //  Created by Tjark Derlien on Wed Oct 08 2003.
 //  Copyright (c) 2003 Tjark Derlien. All rights reserved.
 //
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-04.
 
+#import "DIXLocalization.h"
 #import "FileSystemDoc.h"
 #import "NSURL-Extensions.h"
 #import "MainWindowController.h"
@@ -14,7 +17,7 @@
 #import "Timing.h"
 #import "InfoPanelController.h"
 #import "FSItem-Utilities.h"
-#import <OmniFoundation/NSArray-OFExtensions.h>
+#import "OmniCompatibility.h"
 #import "NSFileManager-Extensions.h"
 
 NSString *CollectFileKindStatisticsCanceledException = @"CollectFileKindStatisticsCanceledException";
@@ -559,7 +562,7 @@ NSString *OldItem = @"OldItem";
         NSString *subMsg = NSLocalizedString( @"The folder will remain visible in Disk Inventory X, but the files cannot be accessed (e.g. shown in the Finder).",@"");
         
         NSBeginInformationalAlertSheet( msg,
-                                       [NTLocalizedString localize:@"OK" table:@"CocoaTechBase"],
+                                       DIXLocalizedString(@"OK"),
                                        nil, nil,
                                        [[[self windowControllers] objectAtIndex: 0] window],
                                        nil, NULL, NULL, nil,
@@ -605,7 +608,7 @@ NSString *OldItem = @"OldItem";
 		{
 			//error
             NSBeginInformationalAlertSheet( NSLocalizedString( @"The folder's content could not be loaded.", @""),
-                                           [NTLocalizedString localize:@"OK" table:@"CocoaTechBase"],
+                                           DIXLocalizedString(@"OK"),
                                            nil, nil,
                                            [[[self windowControllers] objectAtIndex: 0] window],
                                            nil, NULL, NULL, nil,

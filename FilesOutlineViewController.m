@@ -5,11 +5,13 @@
 //  Created by Tjark Derlien on Mon Sep 29 2003.
 //  Copyright (c) 2003 Tjark Derlien. All rights reserved.
 //
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-04.
 
 #import "FilesOutlineViewController.h"
 #import "FSItem.h"
 #import "FSItem-Utilities.h"
-#import <OmniAppKit/NSTableView-OAExtensions.h>
+#import "OmniCompatibility.h"
 #import "MainWindowController.h"
 #import "Preferences.h"
 

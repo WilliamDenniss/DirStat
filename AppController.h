@@ -4,8 +4,10 @@
 //
 //  Created by Tjark Derlien on 17.02.2019.
 //
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-04.
 
-#import <OmniAppKit/OAController.h>
+#import "OmniCompatibility.h"
 
 #import <Cocoa/Cocoa.h>
 

@@ -1,0 +1,33 @@
+/* Copyright 2026 The DirStat Authors.
+ * App-owned labels for file information and file operations.
+ */
+
+"Name:" = "Name:";
+"Kind:" = "Art:";
+"URL:" = "URL:";
+"Modified:" = "Geändert:";
+"Created:" = "Erstellt:";
+"Owner:" = "Eigentümer:";
+"Group:" = "Gruppe:";
+"Permission:" = "Zugriffsrechte:";
+"Version:" = "Version:";
+"Path:" = "Pfad:";
+"Resolved:" = "Verweisziel:";
+"Application:" = "Programm:";
+"MP3:" = "MP3:";
+"Format:" = "Format:";
+"Mount Point:" = "Einhängepunkt:";
+"Device:" = "Gerät:";
+"Volume:" = "Volume:";
+"Capacity:" = "Kapazität:";
+"Free:" = "Verfügbar:";
+"data:" = "Daten:";
+" bytes" = " Bytes";
+"rsrc:" = "Ressourcen:";
+"Size:" = "Größe:";
+" items" = " Objekte";
+"OK" = "OK";
+"No" = "Nein";
+"Yes" = "Ja";
+"The item \"%@\" could not be moved to the trash." = "Das Objekt „%@“ konnte nicht in den Papierkorb bewegt werden.";
+"Would you like to delete it immediately?" = "Möchten Sie es sofort löschen?";

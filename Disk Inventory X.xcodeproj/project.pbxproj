@@ -1,4 +1,6 @@
 // !$*UTF8*$!
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-04.
 {
 	archiveVersion = 1;
 	classes = {
@@ -7,22 +9,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FB2609040000000000000001 /* OmniCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = FB2609040000000000000002 /* OmniCompatibility.m */; };
+		FB2609040000000000000005 /* FileOperations.strings in Resources */ = {isa = PBXBuildFile; fileRef = FB2609040000000000000006 /* FileOperations.strings */; };
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 		FC2A428A2219C89900A484D7 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2A42892219C89900A484D7 /* AppController.m */; };
 		FC2C2CA2238C802600D04E20 /* memory usage using NSURL.txt in Resources */ = {isa = PBXBuildFile; fileRef = FC2C2CA0238C802600D04E20 /* memory usage using NSURL.txt */; };
 		FC2C2CA3238C802600D04E20 /* macOS privacy protected folders.txt in Resources */ = {isa = PBXBuildFile; fileRef = FC2C2CA1238C802600D04E20 /* macOS privacy protected folders.txt */; };
 		FC2E58FF21D3BFDF00F6F03B /* Disk Inventory Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = FC2E58FE21D3BFDF00F6F03B /* Disk Inventory Icon.png */; };
 		FC33B45A230C846F00133632 /* NSURL-Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = FC33B459230C846F00133632 /* NSURL-Extensions.m */; };
-		FC347FA022CBDFE60002CDED /* TreeMapView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC745C8D21C048D00023DC2D /* TreeMapView.framework */; };
-		FC347FA122CBDFED0002CDED /* OmniAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC347F9322CBDF650002CDED /* OmniAppKit.framework */; };
-		FC347FA222CBDFED0002CDED /* OmniBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC347F9422CBDF660002CDED /* OmniBase.framework */; };
-		FC347FA322CBDFED0002CDED /* OmniFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC347F9222CBDF650002CDED /* OmniFoundation.framework */; };
-		FC347FA622CBDFF20002CDED /* CocoaTechStrings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC347F9A22CBDFA20002CDED /* CocoaTechStrings.framework */; };
-		FC347FA722CBE0340002CDED /* TreeMapView.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FC347F9822CBDF870002CDED /* TreeMapView.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		FC347FA822CBE0340002CDED /* OmniAppKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FC347F9322CBDF650002CDED /* OmniAppKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		FC347FA922CBE0340002CDED /* OmniBase.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FC347F9422CBDF660002CDED /* OmniBase.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		FC347FAA22CBE0340002CDED /* OmniFoundation.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FC347F9222CBDF650002CDED /* OmniFoundation.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		FC347FAD22CBE0340002CDED /* CocoaTechStrings.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FC347F9A22CBDFA20002CDED /* CocoaTechStrings.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		FC347FA022CBDFE60002CDED /* TreeMapView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC347F9822CBDF870002CDED /* TreeMapView.framework */; };
+		FC347FA722CBE0340002CDED /* TreeMapView.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FC347F9822CBDF870002CDED /* TreeMapView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FC4C4AC109802035004CCA22 /* Help in Resources */ = {isa = PBXBuildFile; fileRef = FC4C4ABF09802035004CCA22 /* Help */; };
 		FC4C4FF70981520A004CCA22 /* AppsForItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FC4C4FF50981520A004CCA22 /* AppsForItem.m */; };
 		FC7F775D1067BAB10090E839 /* NTFilePasteboardSource.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7F775C1067BAB10090E839 /* NTFilePasteboardSource.m */; };
@@ -95,41 +91,27 @@
 		FCFB17B621B876A400E3F8C4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FCFB17B521B876A400E3F8C4 /* Images.xcassets */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		FC2E590521D439CF00F6F03B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FC745C8821C048D00023DC2D /* TreeMapView.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = TreeMapView;
-		};
-		FC745C8C21C048D00023DC2D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FC745C8821C048D00023DC2D /* TreeMapView.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
-			remoteInfo = TreeMapView;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		FCED9ED9106ABB4D00667E44 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
+			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
 				FC347FA722CBE0340002CDED /* TreeMapView.framework in CopyFiles */,
-				FC347FA822CBE0340002CDED /* OmniAppKit.framework in CopyFiles */,
-				FC347FA922CBE0340002CDED /* OmniBase.framework in CopyFiles */,
-				FC347FAA22CBE0340002CDED /* OmniFoundation.framework in CopyFiles */,
-				FC347FAD22CBE0340002CDED /* CocoaTechStrings.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		FB260904000000000000000A /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/FileOperations.strings; sourceTree = "<group>"; };
+		FB2609040000000000000009 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/FileOperations.strings; sourceTree = "<group>"; };
+		FB2609040000000000000008 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/FileOperations.strings; sourceTree = "<group>"; };
+		FB2609040000000000000007 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/FileOperations.strings; sourceTree = "<group>"; };
+		FB2609040000000000000004 /* DIXLocalization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIXLocalization.h; sourceTree = "<group>"; };
+		FB2609040000000000000003 /* OmniCompatibility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OmniCompatibility.h; sourceTree = "<group>"; };
+		FB2609040000000000000002 /* OmniCompatibility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OmniCompatibility.m; sourceTree = "<group>"; };
 		1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		2A37F4C4FDCFA73011CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		2A37F4C5FDCFA73011CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -156,13 +138,7 @@
 		FC2E58FE21D3BFDF00F6F03B /* Disk Inventory Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Disk Inventory Icon.png"; sourceTree = "<group>"; };
 		FC33B458230C846F00133632 /* NSURL-Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL-Extensions.h"; sourceTree = SOURCE_ROOT; };
 		FC33B459230C846F00133632 /* NSURL-Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL-Extensions.m"; sourceTree = SOURCE_ROOT; };
-		FC347F9222CBDF650002CDED /* OmniFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OmniFoundation.framework; path = "../../../../OmniFrameworks_2018-09-22/Build/Release/OmniFoundation.framework"; sourceTree = "<group>"; };
-		FC347F9322CBDF650002CDED /* OmniAppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OmniAppKit.framework; path = "../../../../OmniFrameworks_2018-09-22/Build/Release/OmniAppKit.framework"; sourceTree = "<group>"; };
-		FC347F9422CBDF660002CDED /* OmniBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OmniBase.framework; path = "../../../../OmniFrameworks_2018-09-22/Build/Release/OmniBase.framework"; sourceTree = "<group>"; };
-		FC347F9822CBDF870002CDED /* TreeMapView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TreeMapView.framework; path = ../../../../TreeMapView/vdev/make/Build/Release/TreeMapView.framework; sourceTree = "<group>"; };
-		FC347F9A22CBDFA20002CDED /* CocoaTechStrings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaTechStrings.framework; path = ../../../../PathFinder_4.8.5_SDK/build/Release/CocoaTechStrings.framework; sourceTree = "<group>"; };
-		FC347F9B22CBDFA20002CDED /* CocoatechCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoatechCore.framework; path = ../../../../PathFinder_4.8.5_SDK/build/Release/CocoatechCore.framework; sourceTree = "<group>"; };
-		FC347F9C22CBDFA20002CDED /* CocoatechFile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoatechFile.framework; path = ../../../../PathFinder_4.8.5_SDK/build/Release/CocoatechFile.framework; sourceTree = "<group>"; };
+		FC347F9822CBDF870002CDED /* TreeMapView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TreeMapView.framework; path = TreeMapView.framework; sourceTree = DIX_FRAMEWORK_DIR; };
 		FC42B8622202405A0080570A /* es */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = es; path = es.lproj/TreeMapPreferencesPage.nib; sourceTree = "<group>"; };
 		FC42B8632202405A0080570A /* es */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = es; path = es.lproj/GeneralPreferencesPage.nib; sourceTree = "<group>"; };
 		FC42B8642202405A0080570A /* es */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = es; path = es.lproj/FinderCMPreferencesPage.nib; sourceTree = "<group>"; };
@@ -180,7 +156,6 @@
 		FC4C4AC009802035004CCA22 /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = English.lproj/Help; sourceTree = "<group>"; };
 		FC4C4FF40981520A004CCA22 /* AppsForItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppsForItem.h; sourceTree = "<group>"; };
 		FC4C4FF50981520A004CCA22 /* AppsForItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppsForItem.m; sourceTree = "<group>"; };
-		FC745C8821C048D00023DC2D /* TreeMapView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TreeMapView.xcodeproj; path = ../../../../TreeMapView/vdev/make/src/TreeMapView.xcodeproj; sourceTree = "<group>"; };
 		FC7F775B1067BAB10090E839 /* NTFilePasteboardSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTFilePasteboardSource.h; sourceTree = "<group>"; };
 		FC7F775C1067BAB10090E839 /* NTFilePasteboardSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTFilePasteboardSource.m; sourceTree = "<group>"; };
 		FC7F77621067BC310090E839 /* NTInfoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTInfoView.h; sourceTree = "<group>"; };
@@ -318,10 +293,6 @@
 			files = (
 				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
 				FC347FA022CBDFE60002CDED /* TreeMapView.framework in Frameworks */,
-				FC347FA622CBDFF20002CDED /* CocoaTechStrings.framework in Frameworks */,
-				FC347FA122CBDFED0002CDED /* OmniAppKit.framework in Frameworks */,
-				FC347FA222CBDFED0002CDED /* OmniBase.framework in Frameworks */,
-				FC347FA322CBDFED0002CDED /* OmniFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -377,7 +348,6 @@
 				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
 				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
-				FCEE299D106266CB00B16DBB /* Project References */,
 				19C28FB0FE9D524F11CA2CBB /* Products */,
 			);
 			name = "Disk Inventory X";
@@ -386,6 +356,9 @@
 		2A37F4AFFDCFA73011CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				FB2609040000000000000002 /* OmniCompatibility.m */,
+				FB2609040000000000000003 /* OmniCompatibility.h */,
+				FB2609040000000000000004 /* DIXLocalization.h */,
 				32DBCF750370BD2300C91783 /* Disk Inventory X_Prefix.pch */,
 				FCCFB2A9097FA3FD009EA2B6 /* main.m */,
 			);
@@ -405,6 +378,7 @@
 				FCCFB366097FA4C1009EA2B6 /* MainMenu.nib */,
 				FCCFB36A097FA4C1009EA2B6 /* TreeMap.nib */,
 				FCCFB36E097FA4C1009EA2B6 /* VolumesPanel.nib */,
+				FB2609040000000000000006 /* FileOperations.strings */,
 				FCCFB364097FA4C1009EA2B6 /* Localizable.strings */,
 				FCCFB34D097FA4C1009EA2B6 /* Credits.rtf */,
 				FCCFB360097FA4C1009EA2B6 /* InfoPlist.strings */,
@@ -420,8 +394,6 @@
 			isa = PBXGroup;
 			children = (
 				FC347F9822CBDF870002CDED /* TreeMapView.framework */,
-				FC66DCF5107A28A500F46D76 /* OmniGroup */,
-				FC66DB02107A27E600F46D76 /* CocoaTech */,
 				1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */,
 				1058C7A8FEA54F5311CA2CBB /* Other Frameworks */,
 			);
@@ -438,34 +410,6 @@
 				FCB2FDC32375F4E100DC4806 /* NSFileManager-Extensions.m */,
 			);
 			path = "Foundation Extensions";
-			sourceTree = "<group>";
-		};
-		FC66DB02107A27E600F46D76 /* CocoaTech */ = {
-			isa = PBXGroup;
-			children = (
-				FC347F9B22CBDFA20002CDED /* CocoatechCore.framework */,
-				FC347F9C22CBDFA20002CDED /* CocoatechFile.framework */,
-				FC347F9A22CBDFA20002CDED /* CocoaTechStrings.framework */,
-			);
-			name = CocoaTech;
-			sourceTree = "<group>";
-		};
-		FC66DCF5107A28A500F46D76 /* OmniGroup */ = {
-			isa = PBXGroup;
-			children = (
-				FC347F9322CBDF650002CDED /* OmniAppKit.framework */,
-				FC347F9422CBDF660002CDED /* OmniBase.framework */,
-				FC347F9222CBDF650002CDED /* OmniFoundation.framework */,
-			);
-			name = OmniGroup;
-			sourceTree = "<group>";
-		};
-		FC745C8921C048D00023DC2D /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				FC745C8D21C048D00023DC2D /* TreeMapView.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		FC7F775A1067BAB10090E839 /* CocoaTech-Depreciated */ = {
@@ -677,14 +621,6 @@
 			name = Documentation;
 			sourceTree = "<group>";
 		};
-		FCEE299D106266CB00B16DBB /* Project References */ = {
-			isa = PBXGroup;
-			children = (
-				FC745C8821C048D00023DC2D /* TreeMapView.xcodeproj */,
-			);
-			name = "Project References";
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -696,12 +632,10 @@
 				8D15AC300486D014006FF6A4 /* Sources */,
 				8D15AC330486D014006FF6A4 /* Frameworks */,
 				FCED9ED9106ABB4D00667E44 /* CopyFiles */,
-				FC4C4C740980221D004CCA22 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				FC2E590621D439CF00F6F03B /* PBXTargetDependency */,
 			);
 			name = "Disk Inventory X";
 			productInstallPath = "$(HOME)/Applications";
@@ -718,7 +652,6 @@
 				LastUpgradeCheck = 1000;
 				TargetAttributes = {
 					8D15AC270486D014006FF6A4 = {
-						DevelopmentTeam = 65J464P6J4;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 0;
@@ -743,28 +676,12 @@
 			);
 			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* Disk Inventory X */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = FC745C8921C048D00023DC2D /* Products */;
-					ProjectRef = FC745C8821C048D00023DC2D /* TreeMapView.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				8D15AC270486D014006FF6A4 /* Disk Inventory X */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		FC745C8D21C048D00023DC2D /* TreeMapView.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = TreeMapView.framework;
-			remoteRef = FC745C8C21C048D00023DC2D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8D15AC2B0486D014006FF6A4 /* Resources */ = {
@@ -796,6 +713,7 @@
 				FCCFB37A097FA4C1009EA2B6 /* InfoPanel.nib in Resources */,
 				FCCFB37B097FA4C1009EA2B6 /* InfoPlist.strings in Resources */,
 				FCCFB37C097FA4C1009EA2B6 /* LoadingPanel.nib in Resources */,
+				FB2609040000000000000005 /* FileOperations.strings in Resources */,
 				FCCFB37D097FA4C1009EA2B6 /* Localizable.strings in Resources */,
 				FCCFB37E097FA4C1009EA2B6 /* MainMenu.nib in Resources */,
 				FCCFB37F097FA4C1009EA2B6 /* Preferences.strings in Resources */,
@@ -809,27 +727,12 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		FC4C4C740980221D004CCA22 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"$BUILD_STYLE\" = \"Release\" ]\nthen\n\n# delete framework's header files\necho \"Deleting PrivateHeaders (files, dirs and links) from \\\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\\\"...\"\n\nfind \"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH\" -type d -name Headers -print0 | xargs -0 rm -rf\nfind \"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH\" -type d -name PrivateHeaders -print0 | xargs -0 rm -rf\n\n# delete ad-hoc code signature (I have no Apple ID yet)\necho \"deleting ad-hoc code signature from \\\"${TARGET_BUILD_DIR}\\\"...\"\n\nfind \"$TARGET_BUILD_DIR\" -type d -name _CodeSignature -print0 | xargs -0 rm -rf\n\n\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		8D15AC300486D014006FF6A4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB2609040000000000000001 /* OmniCompatibility.m in Sources */,
 				FCCFB2AA097FA3FD009EA2B6 /* main.m in Sources */,
 				FCCFB303097FA42B009EA2B6 /* DIXTableView.m in Sources */,
 				FCCFB304097FA42B009EA2B6 /* DIXOutlineView.m in Sources */,
@@ -877,15 +780,18 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		FC2E590621D439CF00F6F03B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = TreeMapView;
-			targetProxy = FC2E590521D439CF00F6F03B /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin PBXVariantGroup section */
+		FB2609040000000000000006 /* FileOperations.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FB2609040000000000000007 /* English */,
+				FB2609040000000000000008 /* de */,
+				FB2609040000000000000009 /* es */,
+				FB260904000000000000000A /* fr */,
+			);
+			name = FileOperations.strings;
+			sourceTree = "<group>";
+		};
 		FC4C4ABF09802035004CCA22 /* Help */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1049,19 +955,12 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1.3;
-				DEVELOPMENT_TEAM = 65J464P6J4;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(FRAMEWORK_SEARCH_PATHS)",
-					"$(FRAMEWORK_SEARCH_PATHS_COCOATECH)",
-					"$(FRAMEWORK_SEARCH_PATHS_OMNI)",
-					"$(FRAMEWORK_SEARCH_PATHS_TREEMAP)",
-				);
-				FRAMEWORK_SEARCH_PATHS_COCOATECH = "\"$(SRCROOT)/../../../../PathFinder_4.8.5_SDK/build/Debug\"";
-				FRAMEWORK_SEARCH_PATHS_OMNI = "\"$(SRCROOT)/../../../../OmniFrameworks_2018-09-22/Build/Products/Debug\"";
-				FRAMEWORK_SEARCH_PATHS_TREEMAP = "\"$(SRCROOT)/../../../../TreeMapView/vdev/make/Build/Products/Debug\"";
+				DIX_FRAMEWORK_DIR = "$(SRCROOT)/build/TreeMap";
+				FRAMEWORK_SEARCH_PATHS = "$(DIX_FRAMEWORK_DIR)";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
@@ -1071,14 +970,13 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MARKETING_VERSION = 1.3;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.derlien.DiskInventoryX;
 				PRODUCT_NAME = "Disk Inventory X";
 				SDKROOT = macosx;
 				SWIFT_VERSION = 4.2;
-				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1089,20 +987,13 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1.3;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(FRAMEWORK_SEARCH_PATHS)",
-					"$(FRAMEWORK_SEARCH_PATHS_COCOATECH)",
-					"$(FRAMEWORK_SEARCH_PATHS_OMNI)",
-					"$(FRAMEWORK_SEARCH_PATHS_TREEMAP)",
-				);
-				FRAMEWORK_SEARCH_PATHS_COCOATECH = "\"$(SRCROOT)/../../../../PathFinder_4.8.5_SDK/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_OMNI = "\"$(SRCROOT)/../../../../OmniFrameworks_2018-09-22/Build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_TREEMAP = "\"$(SRCROOT)/../../../../TreeMapView/vdev/make/Build/Release\"";
+				DIX_FRAMEWORK_DIR = "$(SRCROOT)/build/TreeMap";
+				FRAMEWORK_SEARCH_PATHS = "$(DIX_FRAMEWORK_DIR)";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = "";
@@ -1111,13 +1002,12 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.derlien.DiskInventoryX;
 				PRODUCT_NAME = "Disk Inventory X";
 				SDKROOT = macosx;
 				SWIFT_VERSION = 4.2;
-				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1133,7 +1023,7 @@
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SHARED_PRECOMPS_DIR = "$(PROJECT_TEMP_DIR)/SharedPrecompiledHeaders";
@@ -1149,7 +1039,7 @@
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				SDKROOT = macosx;
 				SHARED_PRECOMPS_DIR = "$(PROJECT_TEMP_DIR)/SharedPrecompiledHeaders";
 			};

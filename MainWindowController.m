@@ -5,7 +5,10 @@
 //  Created by Tjark Derlien on Mon Sep 29 2003.
 //  Copyright (c) 2003 Tjark Derlien. All rights reserved.
 //
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-04.
 
+#import "DIXLocalization.h"
 #import "MainWindowController.h"
 #import "InfoPanelController.h"
 #import "Timing.h"
@@ -13,7 +16,7 @@
 #import "FSItem-Utilities.h"
 #import "FileSizeTransformer.h"
 #import "AppsForItem.h"
-#import <OmniFoundation/NSString-OFExtensions.h>
+#import "OmniCompatibility.h"
 #import "NSURL-Extensions.h"
 
 @interface MainWindowController(Private)
@@ -229,19 +232,19 @@
 	//(only local items can be moved to trash)
 	if ( ![[selectedItem fileURL] isLocalVolume] )
 	{
-		NSString *msg = [NSString stringWithFormat: [NTLocalizedString localize: @"The item \"%@\" could not be moved to the trash."],
+		NSString *msg = [NSString stringWithFormat: DIXLocalizedString(@"The item \"%@\" could not be moved to the trash."),
 													[selectedItem displayName]];
 
 		NSBeginAlertSheet( msg,
-						  [NTLocalizedString localize: @"No"],
-						  [NTLocalizedString localize: @"Yes"],
+						  DIXLocalizedString(@"No"),
+						  DIXLocalizedString(@"Yes"),
 						  nil,
 						  [self window],
 						  self,
 						  nil,
 						  @selector(moveToTrashSheetDidDismiss: returnCode: contextInfo:),
 						  selectedItem,
-						  @"%@", [NTLocalizedString localize: @"Would you like to delete it immediately?"]);
+						  @"%@", DIXLocalizedString(@"Would you like to delete it immediately?"));
 	}
 	else
 	{
@@ -636,7 +639,7 @@
         NSString *subMsg = error.localizedFailureReason; //NSLocalizedString( @"Maybe you do not have sufficient access privileges.", @"" );
         
         NSBeginInformationalAlertSheet( msg,
-                                       [NTLocalizedString localize:@"OK" table:@"CocoaTechBase"],
+                                       DIXLocalizedString(@"OK"),
                                        nil, nil,
                                        [self window],
                                        nil, NULL, NULL, nil,
