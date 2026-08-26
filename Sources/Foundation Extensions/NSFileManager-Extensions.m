@@ -158,7 +158,19 @@
          }
          else if ( isDir != nil && [isDir boolValue] )
          {
-             [self contentsAtPath:[protectedURL path]];
+             // contentsAtPath: reads the bytes of a file.  Passing it a
+             // directory can block indefinitely while macOS is resolving a
+             // privacy-protected folder.  Enumerate the directory instead;
+             // this still triggers the consent check without trying to open
+             // the directory as a regular file.
+             NSError *contentsError = nil;
+             [self contentsOfDirectoryAtURL:protectedURL
+                 includingPropertiesForKeys:nil
+                                    options:NSDirectoryEnumerationSkipsHiddenFiles
+                                      error:&contentsError];
+
+             if ( contentsError != nil )
+                 NSLog(@"cannot list '%@': %@", [protectedURL path], contentsError);
          }
      }
 }

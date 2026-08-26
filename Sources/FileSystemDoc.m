@@ -1181,11 +1181,13 @@ NSString *OldItem = @"OldItem";
                 [defaults setBool: YES forVersionDependantKey: DontShowPrivacyWarningMessage];
             }
             
-            // let the alert disappear before the consent dialogs pop up
-            [[NSRunLoop currentRunLoop] runUntilDate: [NSDate date]];
         }
         
-        [fileMgr triggerConsentDialogForPrivacyProtectedFolders:protectedFolders];
+        // Do not touch every protected folder here.  Accessing one can wait
+        // synchronously for a macOS privacy decision, and this method runs
+        // before the cancellable loading panel is created.  The directory
+        // enumerator will request access when it reaches each folder and its
+        // error handler will continue past folders the user does not allow.
     }
 }
 
