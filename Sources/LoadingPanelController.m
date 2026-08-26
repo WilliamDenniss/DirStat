@@ -20,10 +20,16 @@
 	if ( ![NSBundle loadNibNamed: @"LoadingPanel" owner: self] )
 		NSAssert( NO, @"couldn't load LoadingPanel.nib" );
 	
-	[_loadingProgressIndicator setUsesThreadedAnimation: NO];
+	// Directory traversal is synchronous, so let the indicator animate even
+	// while the scanner is between event-loop updates.
+	[_loadingProgressIndicator setUsesThreadedAnimation: YES];
     [_loadingProgressIndicator startAnimation: self];
-	
-	[_loadingPanel display];
+
+	// LoadingPanel.nib is not visible at launch.  -display only redraws a
+	// visible window, so explicitly put the progress panel on screen before
+	// starting the modal session.
+	[_loadingPanel center];
+	[_loadingPanel makeKeyAndOrderFront: self];
 	
 	//start modal session for the progress window
 	_loadingPanelModalSession = [[NSApplication sharedApplication] beginModalSessionForWindow: _loadingPanel];
@@ -50,7 +56,7 @@
 	
 	[_loadingPanel setWorksWhenModal: YES];
 	
-	[_loadingProgressIndicator setUsesThreadedAnimation: NO];
+	[_loadingProgressIndicator setUsesThreadedAnimation: YES];
     [_loadingProgressIndicator startAnimation: self];
 	
 	//we don't have modal session if we show the panel as a sheet
@@ -183,4 +189,3 @@
 }
 
 @end
-

@@ -105,6 +105,7 @@ typedef enum
 @interface NSObject(FSItemDelegate)
 - (BOOL) fsItemEnteringFolder: (FSItem*) item; //delegate may return NO to stop loading in "loadChilds"
 - (BOOL) fsItemExittingFolder: (FSItem*) item;
+- (BOOL) fsItemDidProcessItem: (FSItem*) item; //called for every discovered file/folder; delegate may return NO to stop loading
 - (BOOL) fsItemShouldIgnoreCreatorCode: (FSItem*) item; //default is NO (if not implemented by delegate)
 - (BOOL) fsItemShouldLookIntoPackages: (FSItem*) item; //set kind string in "loadChilds?";
 													   //default is NO (if not implemented by delegate)

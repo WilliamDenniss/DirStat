@@ -1049,6 +1049,16 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
                                                    parent: [itemStack lastObject]
                                             setKindString: setKindStrings
                                           usePhysicalSize: usePhysicalSize];
+
+        // Folder-entry callbacks alone are not frequent enough for a large,
+        // flat directory.  Give the delegate a cancellation/progress point
+        // for every discovered item so the loading panel remains responsive.
+        if ( [delegate respondsToSelector: @selector(fsItemDidProcessItem:)]
+            && ![delegate fsItemDidProcessItem: currentItem] )
+        {
+            [currentItem release];
+            [NSException raise: FSItemLoadingCanceledException format: @""];
+        }
         
         if ( [currentUrl isFirmlink] )
         {

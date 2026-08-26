@@ -266,7 +266,10 @@ NSString *OldItem = @"OldItem";
         LOG(@"%u folders", g_folderCount );
         
 		//ok, now we've got an FSItem for every file and directory in the given folder
-		//[_progressController setMessageText: NSLocalizedString( @"Classifying Files", @"")];
+		[_progressController setMessageText:
+		 [NSString stringWithFormat: NSLocalizedString( @"Classifying %u items\u2026", @"Progress shown after scanning a folder" ),
+		  g_fileCount + g_folderCount]];
+		[_progressController runEventLoop];
 				
 		//collect sizes and file count of all file kinds 
 		[self refreshFileKindStatistics];
@@ -895,6 +898,28 @@ NSString *OldItem = @"OldItem";
 	return YES;
 }
 
+- (BOOL) fsItemDidProcessItem: (FSItem*) item
+{
+	if ( _progressController == nil )
+		return YES;
+
+	unsigned itemCount = g_fileCount + g_folderCount;
+	// Updating the label is considerably more expensive than checking the
+	// event loop, so refresh the text periodically while still polling for a
+	// cancel click after every item.
+	if ( itemCount == 1 || itemCount % 128 == 0 )
+	{
+		FSItem *currentFolder = [_directoryStack lastObject];
+		NSString *folderPath = currentFolder == nil ? [[item parent] displayPath] : [currentFolder displayPath];
+		[_progressController setMessageText:
+		 [NSString stringWithFormat: NSLocalizedString( @"Scanning %@\n%u items found", @"Progress shown while scanning a folder" ),
+		  folderPath == nil ? @"" : folderPath, itemCount]];
+	}
+
+	[_progressController runEventLoop];
+	return ![_progressController cancelPressed];
+}
+
 - (BOOL) fsItemShouldIgnoreCreatorCode: (FSItem*) item
 {
 	return [self ignoreCreatorCode];
@@ -965,6 +990,13 @@ NSString *OldItem = @"OldItem";
 
 - (void) addItemToFileKindStatistic: (FSItem*) item includingChilds: (BOOL) includingChilds
 {
+	if ( _progressController != nil )
+	{
+		[_progressController runEventLoop];
+		if ( [_progressController cancelPressed] )
+			[NSException raise: CollectFileKindStatisticsCanceledException format: @""];
+	}
+
     //if we are called with nil as item, we rebuild the statistic
     if ( item == nil )
     {
