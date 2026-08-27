@@ -124,8 +124,7 @@
 	if ( self == nil )
 		return nil;
 
-	_updateState = [[LoadingPanelUpdateState alloc]
-					 initWithMinimumUpdateInterval: 0.2];
+	_updateState = [[LoadingPanelUpdateState alloc] init];
 	
     //load Nib with progress panel
 	if ( ![NSBundle loadNibNamed: @"LoadingPanel" owner: self] )
@@ -153,8 +152,7 @@
 	if ( self == nil )
 		return nil;
 
-	_updateState = [[LoadingPanelUpdateState alloc]
-					 initWithMinimumUpdateInterval: 0.2];
+	_updateState = [[LoadingPanelUpdateState alloc] init];
 	
     //load Nib with progress panel
 	if ( ![NSBundle loadNibNamed: @"LoadingPanel" owner: self] )
@@ -467,7 +465,7 @@
 
 - (void) runEventLoop
 {
-	// AppKit work is capped at five updates per second.  Calls between ticks
+	// AppKit work is capped at 30 updates per second.  Calls between ticks
 	// merely replace the retained latest values in LoadingPanelUpdateState.
 	NSTimeInterval currentTime = [self currentUpdateTime];
 	if ( [_updateState shouldFlushAtTime: currentTime force: NO] )

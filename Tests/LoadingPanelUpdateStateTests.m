@@ -17,8 +17,7 @@
 
 - (LoadingPanelUpdateState*) updateState
 {
-	return [[[LoadingPanelUpdateState alloc]
-		initWithMinimumUpdateInterval: 0.2] autorelease];
+	return [[[LoadingPanelUpdateState alloc] init] autorelease];
 }
 
 - (void) testDirectoryNotificationsKeepOnlyTheLatestValue
@@ -41,15 +40,15 @@
 	XCTAssertNil( [state pendingDirectoryURL] );
 }
 
-- (void) testFirstAndForcedFlushesAreImmediateWhileOrdinaryFlushesAreThrottled
+- (void) testFirstAndForcedFlushesAreImmediateWhileOrdinaryFlushesAreThrottledToThirtyHertz
 {
 	LoadingPanelUpdateState *state = [self updateState];
 
 	XCTAssertTrue( [state shouldFlushAtTime: 10.0 force: NO] );
 	[state noteFlushAtTime: 10.0];
-	XCTAssertFalse( [state shouldFlushAtTime: 10.1 force: NO] );
-	XCTAssertTrue( [state shouldFlushAtTime: 10.201 force: NO] );
-	XCTAssertTrue( [state shouldFlushAtTime: 10.1 force: YES] );
+	XCTAssertFalse( [state shouldFlushAtTime: 10.03 force: NO] );
+	XCTAssertTrue( [state shouldFlushAtTime: 10.034 force: NO] );
+	XCTAssertTrue( [state shouldFlushAtTime: 10.01 force: YES] );
 }
 
 - (void) testBackwardsTimestampDoesNotDisableThrottle
@@ -60,8 +59,8 @@
 	XCTAssertFalse( [state shouldFlushAtTime: 19.0 force: NO] );
 	XCTAssertTrue( [state shouldFlushAtTime: 19.0 force: YES] );
 	[state noteFlushAtTime: 19.0];
-	XCTAssertFalse( [state shouldFlushAtTime: 20.1 force: NO] );
-	XCTAssertTrue( [state shouldFlushAtTime: 20.201 force: NO] );
+	XCTAssertFalse( [state shouldFlushAtTime: 20.03 force: NO] );
+	XCTAssertTrue( [state shouldFlushAtTime: 20.034 force: NO] );
 }
 
 - (void) testQueuedAndDisplayedProgressNeverDecrease

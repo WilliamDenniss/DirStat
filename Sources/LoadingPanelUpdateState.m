@@ -6,12 +6,14 @@
 #import "LoadingPanelUpdateState.h"
 #import "VolumeScanProgress.h"
 
+static const NSTimeInterval LoadingPanelDefaultUpdateInterval = 1.0 / 30.0;
+
 
 @implementation LoadingPanelUpdateState
 
 - (id) init
 {
-	return [self initWithMinimumUpdateInterval: 0.2];
+	return [self initWithMinimumUpdateInterval: LoadingPanelDefaultUpdateInterval];
 }
 
 - (id) initWithMinimumUpdateInterval: (NSTimeInterval) interval

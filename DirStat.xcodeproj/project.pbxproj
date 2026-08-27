@@ -1062,7 +1062,7 @@
 					"$(SRCROOT)/Sources/CocoaTech-Depreciated",
 				);
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dirstat.app.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1082,7 +1082,7 @@
 					"$(SRCROOT)/Sources/CocoaTech-Depreciated",
 				);
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dirstat.app.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

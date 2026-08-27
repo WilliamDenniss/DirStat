@@ -960,7 +960,7 @@ NSString *OldItem = @"OldItem";
 	[_directoryStack removeLastObject];
 
 	// Keep only the latest directory context.  This does no formatting,
-	// painting, or event-loop work; the ordinary five-Hz tick will render it.
+	// painting, or event-loop work; the ordinary 30-Hz tick will render it.
 	FSItem *parent = [_directoryStack lastObject];
 	if ( parent != nil )
 	{
@@ -991,14 +991,14 @@ NSString *OldItem = @"OldItem";
 							 fileIdentifier: fileIdentifier
 								 linkCount: linkCountValue];
 		// Queue every byte-accounting change.  The controller retains only the
-		// latest monotonic value and still touches AppKit at most five times per
+		// latest monotonic value and still touches AppKit at most 30 times per
 		// second, so sparse scans visibly advance without rebuilding a UI queue.
 		[_progressController setProgressFraction: [_scanProgress progressFraction]];
 	}
 
 	// Queue each discovered directory before asking the enumerator for the next
 	// item. LoadingPanelController retains only the latest URL and coalesces
-	// formatting and painting to its five-Hz UI tick.
+	// formatting and painting to its 30-Hz UI tick.
 	if ( isFolder || itemCount == 1 || itemCount % 128 == 0 )
 	{
 		FSItem *currentFolder = [_directoryStack lastObject];
