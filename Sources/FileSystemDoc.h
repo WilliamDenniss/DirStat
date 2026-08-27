@@ -13,6 +13,8 @@
 #import "LoadingPanelController.h"
 #import "FileTypeColors.h"
 
+@class VolumeScanProgress;
+
 //holds information about the count and size of the files of one kind (e.g. MP3 files)
 @interface FileKindStatistic : NSObject
 {
@@ -52,6 +54,7 @@
 	//these variables are used during the initial directory scan
 	LoadingPanelController *_progressController;
 	NSMutableArray *_directoryStack;
+	VolumeScanProgress *_scanProgress;
 }
 
 - (BOOL) showPhysicalFileSize;

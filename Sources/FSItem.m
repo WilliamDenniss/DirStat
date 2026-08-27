@@ -871,9 +871,9 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
 	if ( !isFolder )
 	{
 		 if ( usePhysicalSize )
-			[self setSizeValue: [url physicalSize]];
+			[self setSizeValue: [[url physicalSize] unsignedLongLongValue]];
 		 else
-			[self setSizeValue: [url logicalSize]];
+			[self setSizeValue: [[url logicalSize] unsignedLongLongValue]];
 	}
     else
         _childs = [[NSMutableArray<FSItem*> alloc] init];
@@ -932,7 +932,7 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
 		}
 	}
     
-    NSArray<NSString*> *urlProperties = [NSArray<NSString*> arrayWithObjects:
+    NSArray<NSURLResourceKey> *urlProperties = [NSArray<NSURLResourceKey> arrayWithObjects:
                                         //NSURLLocalizedNameKey,
                                         NSURLNameKey,
                                         NSURLIsVolumeKey,
@@ -941,10 +941,12 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
                                         //NSURLIsSymbolicLinkKey,
                                         NSURLTypeIdentifierKey,
                                         //NSURLLocalizedTypeDescriptionKey,
+                                        NSURLTotalFileSizeKey,
                                         NSURLFileSizeKey,
                                         NSURLTotalFileAllocatedSizeKey,
-                                        NSURLFileSizeKey,
-                                        NSURLTotalFileAllocatedSizeKey,
+                                        NSURLFileAllocatedSizeKey,
+                                        NSURLLinkCountKey,
+                                        NSURLFileResourceIdentifierKey,
                                         nil];
 
     // stack of directories (Path to directory currently beeing canned)

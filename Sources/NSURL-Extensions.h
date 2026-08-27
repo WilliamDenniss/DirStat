@@ -28,8 +28,8 @@
 - (NSString*_Nullable) UTI; // uniform type identifier
 - (NSImage*_Nullable) icon;
 
-- (NSNumber*_Nonnull) logicalSize;
-- (NSNumber*_Nonnull) physicalSize;
+- (NSNumber*_Nullable) logicalSize;
+- (NSNumber*_Nullable) physicalSize;
 
 - (NSDate*_Nonnull) creationDate;
 - (NSDate*_Nonnull) modificationDate;
@@ -62,8 +62,8 @@
 - (NSString*_Nonnull) cachedDisplayName;
 - (NSString*_Nullable) cachedUTI; // uniform type identifier
 
-- (NSNumber*_Nonnull) cachedLogicalSize;
-- (NSNumber*_Nonnull) cachedPhysicalSize;
+- (NSNumber*_Nullable) cachedLogicalSize;
+- (NSNumber*_Nullable) cachedPhysicalSize;
 
 - (NSDate*_Nonnull) cachedCreationDate;
 - (NSDate*_Nonnull) cachedModificationDate;

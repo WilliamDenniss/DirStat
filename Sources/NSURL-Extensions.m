@@ -116,26 +116,32 @@ void LoadFirmlinks()
     return [[NSWorkspace sharedWorkspace] iconForFile:[self path]];
 }
 
-- (NSNumber*) logicalSize
+- (NSNumber*_Nullable) logicalSize
 {
     //NSURLTotalFileSizeKey: Total displayable size of the file in bytes (this may include space used by metadata), or nil if not available. (Read-only, value type NSNumber)
     NSNumber *fileSizeBytes = [self getNumberValue: NSURLTotalFileSizeKey];
     
     // fallback to NSURLFileSizeKey
     if ( fileSizeBytes == nil )
-        [self getNumberValue: NSURLFileSizeKey];
+        fileSizeBytes = [self getNumberValue: NSURLFileSizeKey];
  
     return fileSizeBytes;
 }
 
-- (NSNumber*) physicalSize
+- (NSNumber*_Nullable) physicalSize
 {
     //NSURLTotalFileAllocatedSizeKey: Total allocated size of the file in bytes (this may include space used by metadata), or nil if not available. This can be less than the value returned by NSURLTotalFileSizeKey if the resource is compressed. (Read-only, value type NSNumber)
     NSNumber *fileSizeBytes = [self getNumberValue: NSURLTotalFileAllocatedSizeKey];
     
-    // fallback to NSURLTotalFileSizeKey
+    // Fall back to the file's allocated size before using logical sizes.
     if ( fileSizeBytes == nil )
-        [self getNumberValue: NSURLTotalFileSizeKey];
+        fileSizeBytes = [self getNumberValue: NSURLFileAllocatedSizeKey];
+
+    if ( fileSizeBytes == nil )
+        fileSizeBytes = [self getNumberValue: NSURLTotalFileSizeKey];
+
+    if ( fileSizeBytes == nil )
+        fileSizeBytes = [self getNumberValue: NSURLFileSizeKey];
     
     return fileSizeBytes;
 }
@@ -296,26 +302,32 @@ void LoadFirmlinks()
     return [self getCachedStringValue: NSURLTypeIdentifierKey];
 }
 
-- (NSNumber*) cachedLogicalSize
+- (NSNumber*_Nullable) cachedLogicalSize
 {
     //NSURLTotalFileSizeKey: Total displayable size of the file in bytes (this may include space used by metadata), or nil if not available. (Read-only, value type NSNumber)
     NSNumber *fileSizeBytes = [self getCachedNumberValue: NSURLTotalFileSizeKey];
     
     // fallback to NSURLFileSizeKey
     if ( fileSizeBytes == nil )
-        [self getCachedNumberValue: NSURLFileSizeKey];
+        fileSizeBytes = [self getCachedNumberValue: NSURLFileSizeKey];
     
     return fileSizeBytes;
 }
 
-- (NSNumber*) cachedPhysicalSize
+- (NSNumber*_Nullable) cachedPhysicalSize
 {
     //NSURLTotalFileAllocatedSizeKey: Total allocated size of the file in bytes (this may include space used by metadata), or nil if not available. This can be less than the value returned by NSURLTotalFileSizeKey if the resource is compressed. (Read-only, value type NSNumber)
     NSNumber *fileSizeBytes = [self getCachedNumberValue: NSURLTotalFileAllocatedSizeKey];
     
-    // fallback to NSURLTotalFileSizeKey
+    // Fall back to the file's allocated size before using logical sizes.
     if ( fileSizeBytes == nil )
-        [self getCachedNumberValue: NSURLTotalFileSizeKey];
+        fileSizeBytes = [self getCachedNumberValue: NSURLFileAllocatedSizeKey];
+
+    if ( fileSizeBytes == nil )
+        fileSizeBytes = [self getCachedNumberValue: NSURLTotalFileSizeKey];
+
+    if ( fileSizeBytes == nil )
+        fileSizeBytes = [self getCachedNumberValue: NSURLFileSizeKey];
     
     return fileSizeBytes;
 }
