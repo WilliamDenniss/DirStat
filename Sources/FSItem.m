@@ -50,6 +50,9 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
 - (void) loadChildrenAndSetKindStrings: (BOOL) setKindStrings
 					   usePhysicalSize: (BOOL) usePhysicalSize;
 
++ (NSArray<NSURLResourceKey>*) resourceKeysForUsePhysicalSize: (BOOL) usePhysicalSize
+						 collectVolumeProgressMetadata: (BOOL) collectVolumeProgressMetadata;
+
 - (void) setSize: (NSNumber*) size;
 - (void) setSizeValue: (unsigned long long) size;
 
@@ -235,12 +238,10 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
 
 - (BOOL) isFolder
 {
-	if ( ![self isSpecialItem] )
-	{
-		return [[self fileURL] cachedIsDirectory];
-	}
-	else
-		return NO;
+	// File and special items never own a child array.  The folder bit is fixed
+	// at construction, so this avoids a resource-cache dictionary lookup in
+	// every scanner callback.
+	return _childs != nil;
 }
 
 - (BOOL) isPackage
@@ -849,6 +850,37 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
 
 @implementation FSItem(Private)
 
++ (NSArray<NSURLResourceKey>*) resourceKeysForUsePhysicalSize: (BOOL) usePhysicalSize
+						 collectVolumeProgressMetadata: (BOOL) collectVolumeProgressMetadata
+{
+	NSMutableArray<NSURLResourceKey> *resourceKeys = [NSMutableArray arrayWithObjects:
+													 NSURLNameKey,
+													 NSURLIsVolumeKey,
+													 NSURLIsPackageKey,
+													 NSURLIsDirectoryKey,
+													 NSURLTypeIdentifierKey,
+													 NSURLTotalFileSizeKey,
+													 NSURLFileSizeKey,
+													 nil];
+
+	// Physical display sizes and determinate volume progress both need the
+	// complete allocated-size fallback chain. Logical keys remain in the list
+	// because allocated-size values are not available for every filesystem.
+	if ( usePhysicalSize || collectVolumeProgressMetadata )
+	{
+		[resourceKeys addObject: NSURLTotalFileAllocatedSizeKey];
+		[resourceKeys addObject: NSURLFileAllocatedSizeKey];
+	}
+
+	// Hard-link metadata is only needed by the scan-wide volume progress
+	// estimate. The resource identifier is intentionally loaded lazily for the
+	// uncommon files whose link count is greater than one.
+	if ( collectVolumeProgressMetadata )
+		[resourceKeys addObject: NSURLLinkCountKey];
+
+	return resourceKeys;
+}
+
 - (id) initWithURL: (NSURL*)url
             parent: (FSItem*) parent
      setKindString: (BOOL) setKindString
@@ -910,6 +942,9 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
         return;
 	
 	id delegate = [self delegate];
+	BOOL collectVolumeProgressMetadata = NO;
+	if ( [delegate respondsToSelector: @selector(fsItemShouldCollectVolumeProgressMetadata:)] )
+		collectVolumeProgressMetadata = [delegate fsItemShouldCollectVolumeProgressMetadata: self];
 	
     //should we cancel the loading?
     if ( [delegate respondsToSelector: @selector(fsItemEnteringFolder:)]
@@ -932,22 +967,15 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
 		}
 	}
     
-    NSArray<NSURLResourceKey> *urlProperties = [NSArray<NSURLResourceKey> arrayWithObjects:
-                                        //NSURLLocalizedNameKey,
-                                        NSURLNameKey,
-                                        NSURLIsVolumeKey,
-                                        NSURLIsPackageKey,
-                                        NSURLIsDirectoryKey,
-                                        //NSURLIsSymbolicLinkKey,
-                                        NSURLTypeIdentifierKey,
-                                        //NSURLLocalizedTypeDescriptionKey,
-                                        NSURLTotalFileSizeKey,
-                                        NSURLFileSizeKey,
-                                        NSURLTotalFileAllocatedSizeKey,
-                                        NSURLFileAllocatedSizeKey,
-                                        NSURLLinkCountKey,
-                                        NSURLFileResourceIdentifierKey,
-                                        nil];
+    NSArray<NSURLResourceKey> *urlProperties = [[self class]
+        resourceKeysForUsePhysicalSize: usePhysicalSize
+        collectVolumeProgressMetadata: collectVolumeProgressMetadata];
+    // Progress-only keys are prefetched by NSDirectoryEnumerator, but do not
+    // need to be copied into every URL's persistent custom cache.  The delegate
+    // consumes them before the run loop gets a chance to purge NSURL's cache.
+    NSArray<NSURLResourceKey> *cachedURLProperties = [[self class]
+        resourceKeysForUsePhysicalSize: usePhysicalSize
+        collectVolumeProgressMetadata: NO];
 
     // stack of directories (Path to directory currently beeing canned)
     NSMutableArray<FSItem*> *itemStack = [[NSMutableArray alloc] init];
@@ -976,7 +1004,7 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
     for ( NSURL *currentUrl in dirEnum)
     {
         // cache all needed properties (NSURL purges all values upon next pass through the run loop)
-        [currentUrl cacheResourcesInArray: urlProperties];
+        [currentUrl cacheResourcesInArray: cachedURLProperties];
         
         if ( [dirEnum level] > lastEnumLevel )
         {

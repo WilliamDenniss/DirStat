@@ -26,10 +26,54 @@
 
 BOOL g_EnableLogging = NO;
 
+@interface DIXResourceIdentifierProbe : NSObject
+{
+    NSUInteger _requestCount;
+    id _identifier;
+}
+
+@property(nonatomic, readonly) NSUInteger requestCount;
+@property(nonatomic, retain) id identifier;
+
+@end
+
+
+@implementation DIXResourceIdentifierProbe
+
+@synthesize identifier = _identifier;
+
+- (void)dealloc
+{
+    [_identifier release];
+    [super dealloc];
+}
+
+- (NSUInteger)requestCount
+{
+    return _requestCount;
+}
+
+- (BOOL)getResourceValue:(out id *)value
+                   forKey:(NSURLResourceKey)key
+                    error:(out NSError **)error
+{
+    _requestCount++;
+    XCTAssertEqualObjects(key, NSURLFileResourceIdentifierKey);
+    if ( value != NULL )
+        *value = _identifier;
+    if ( error != NULL )
+        *error = nil;
+    return YES;
+}
+
+@end
+
 @interface FSItem (ScannerTesting)
 
 - (void)loadChildrenAndSetKindStrings:(BOOL)setKindStrings
                       usePhysicalSize:(BOOL)usePhysicalSize;
++ (NSArray<NSURLResourceKey> *)resourceKeysForUsePhysicalSize:(BOOL)usePhysicalSize
+							 collectVolumeProgressMetadata:(BOOL)collectVolumeProgressMetadata;
 
 @end
 
@@ -39,12 +83,16 @@ BOOL g_EnableLogging = NO;
     NSMutableArray *_events;
     BOOL _cancelOnFirstDiscoveredItem;
     BOOL _usePhysicalSize;
+    BOOL _collectVolumeProgressMetadata;
+    NSUInteger _volumeProgressMetadataRequestCount;
     VolumeScanProgress *_progress;
 }
 
 @property(nonatomic, readonly) NSArray *events;
 @property(nonatomic) BOOL cancelOnFirstDiscoveredItem;
 @property(nonatomic) BOOL usePhysicalSize;
+@property(nonatomic) BOOL collectVolumeProgressMetadata;
+@property(nonatomic, readonly) NSUInteger volumeProgressMetadataRequestCount;
 @property(nonatomic, retain) VolumeScanProgress *progress;
 
 @end
@@ -104,6 +152,21 @@ BOOL g_EnableLogging = NO;
     _usePhysicalSize = usePhysicalSize;
 }
 
+- (BOOL)collectVolumeProgressMetadata
+{
+    return _collectVolumeProgressMetadata;
+}
+
+- (void)setCollectVolumeProgressMetadata:(BOOL)collectVolumeProgressMetadata
+{
+    _collectVolumeProgressMetadata = collectVolumeProgressMetadata;
+}
+
+- (NSUInteger)volumeProgressMetadataRequestCount
+{
+    return _volumeProgressMetadataRequestCount;
+}
+
 - (BOOL)fsItemEnteringFolder:(FSItem *)item
 {
     [_events addObject:[NSString stringWithFormat:@"enter:%@", [item path]]];
@@ -123,10 +186,11 @@ BOOL g_EnableLogging = NO;
     if (_progress != nil && ![item isFolder])
     {
         NSURL *URL = [item fileURL];
-        NSNumber *allocatedSize = [URL cachedPhysicalSize];
-        NSNumber *linkCount = [URL getCachedNumberValue:NSURLLinkCountKey];
+        NSNumber *allocatedSize = [URL physicalSize];
+        NSNumber *linkCount = [URL getNumberValue:NSURLLinkCountKey];
         id identifier = nil;
-        [URL getCachedResourceValue:&identifier forKey:NSURLFileResourceIdentifierKey error:nil];
+        if ([linkCount unsignedIntegerValue] > 1)
+            [URL getCachedResourceValue:&identifier forKey:NSURLFileResourceIdentifierKey error:nil];
         [_progress recordAllocatedBytes:[allocatedSize unsignedLongLongValue]
                          fileIdentifier:identifier
                               linkCount:linkCount == nil ? 1 : [linkCount unsignedIntegerValue]];
@@ -138,6 +202,12 @@ BOOL g_EnableLogging = NO;
 - (BOOL)fsItemShouldUsePhysicalFileSize:(FSItem *)item
 {
     return _usePhysicalSize;
+}
+
+- (BOOL)fsItemShouldCollectVolumeProgressMetadata:(FSItem *)item
+{
+    _volumeProgressMetadataRequestCount++;
+    return _collectVolumeProgressMetadata;
 }
 
 @end
@@ -152,6 +222,20 @@ BOOL g_EnableLogging = NO;
 
 
 @implementation FSItemScannerTests
+
+- (void)assertResourceKeys:(NSArray<NSURLResourceKey> *)resourceKeys
+            containObject:(NSURLResourceKey)resourceKey
+{
+    XCTAssertTrue([resourceKeys containsObject:resourceKey], @"Expected resource key %@ in %@",
+                  resourceKey, resourceKeys);
+}
+
+- (void)assertResourceKeys:(NSArray<NSURLResourceKey> *)resourceKeys
+               omitObject:(NSURLResourceKey)resourceKey
+{
+    XCTAssertFalse([resourceKeys containsObject:resourceKey], @"Expected resource key %@ to be absent from %@",
+                   resourceKey, resourceKeys);
+}
 
 - (void)setUp
 {
@@ -246,6 +330,72 @@ BOOL g_EnableLogging = NO;
     XCTAssertEqual([empty sizeValue], (unsigned long long)0);
 }
 
+- (void)testLogicalSpinnerResourceKeysOmitProgressOnlyMetadata
+{
+    NSArray<NSURLResourceKey> *resourceKeys = [FSItem
+        resourceKeysForUsePhysicalSize:NO
+        collectVolumeProgressMetadata:NO];
+
+    [self assertResourceKeys:resourceKeys containObject:NSURLTotalFileSizeKey];
+    [self assertResourceKeys:resourceKeys containObject:NSURLFileSizeKey];
+    [self assertResourceKeys:resourceKeys omitObject:NSURLTotalFileAllocatedSizeKey];
+    [self assertResourceKeys:resourceKeys omitObject:NSURLFileAllocatedSizeKey];
+    [self assertResourceKeys:resourceKeys omitObject:NSURLLinkCountKey];
+    [self assertResourceKeys:resourceKeys omitObject:NSURLFileResourceIdentifierKey];
+}
+
+- (void)testPhysicalSpinnerResourceKeysIncludeAllocatedSizeFallbacksOnly
+{
+    NSArray<NSURLResourceKey> *resourceKeys = [FSItem
+        resourceKeysForUsePhysicalSize:YES
+        collectVolumeProgressMetadata:NO];
+
+    [self assertResourceKeys:resourceKeys containObject:NSURLTotalFileAllocatedSizeKey];
+    [self assertResourceKeys:resourceKeys containObject:NSURLFileAllocatedSizeKey];
+    [self assertResourceKeys:resourceKeys containObject:NSURLTotalFileSizeKey];
+    [self assertResourceKeys:resourceKeys containObject:NSURLFileSizeKey];
+    [self assertResourceKeys:resourceKeys omitObject:NSURLLinkCountKey];
+    [self assertResourceKeys:resourceKeys omitObject:NSURLFileResourceIdentifierKey];
+}
+
+- (void)testVolumeProgressResourceKeysIncludeHardLinkCountButNotIdentifier
+{
+    NSArray<NSURLResourceKey> *resourceKeys = [FSItem
+        resourceKeysForUsePhysicalSize:NO
+        collectVolumeProgressMetadata:YES];
+
+    [self assertResourceKeys:resourceKeys containObject:NSURLTotalFileAllocatedSizeKey];
+    [self assertResourceKeys:resourceKeys containObject:NSURLFileAllocatedSizeKey];
+    [self assertResourceKeys:resourceKeys containObject:NSURLTotalFileSizeKey];
+    [self assertResourceKeys:resourceKeys containObject:NSURLFileSizeKey];
+    [self assertResourceKeys:resourceKeys containObject:NSURLLinkCountKey];
+    [self assertResourceKeys:resourceKeys omitObject:NSURLFileResourceIdentifierKey];
+}
+
+- (void)testScannerAsksDelegateWhetherVolumeProgressMetadataIsRequired
+{
+    [self createZeroByteFile:@"data"];
+    FSItemScannerDelegate *delegate = [[[FSItemScannerDelegate alloc] init] autorelease];
+    delegate.collectVolumeProgressMetadata = YES;
+
+    [self scanWithDelegate:delegate usePhysicalSize:NO];
+
+    XCTAssertEqual(delegate.volumeProgressMetadataRequestCount, (NSUInteger)1);
+}
+
+- (void)testFileIdentifierLookupIsLazyForPotentialHardLinks
+{
+    DIXResourceIdentifierProbe *probe = [[[DIXResourceIdentifierProbe alloc] init] autorelease];
+    probe.identifier = @"hard-link-id";
+
+    XCTAssertNil(DIXFileIdentifierForVolumeProgress((NSURL *)probe, 1));
+    XCTAssertEqual(probe.requestCount, (NSUInteger)0);
+
+    XCTAssertEqualObjects(DIXFileIdentifierForVolumeProgress((NSURL *)probe, 2),
+                          @"hard-link-id");
+    XCTAssertEqual(probe.requestCount, (NSUInteger)1);
+}
+
 - (void)testDirectoryIsReportedBeforeItsDescendantIsProcessed
 {
     [self createDirectory:@"slow-directory"];
@@ -268,6 +418,27 @@ BOOL g_EnableLogging = NO;
     XCTAssertNotEqual(descendantProcessed, NSNotFound);
     XCTAssertLessThan(directoryProcessed, directoryEntered);
     XCTAssertLessThan(directoryEntered, descendantProcessed);
+}
+
+- (void)testDirectoryExitIsReportedBeforeFollowingSiblingIsProcessed
+{
+    [self createDirectory:@"aaa-child"];
+    [self createZeroByteFile:@"aaa-child/descendant"];
+    [self createZeroByteFile:@"zzz-sibling"];
+
+    FSItemScannerDelegate *delegate = [[[FSItemScannerDelegate alloc] init] autorelease];
+    [self scanWithDelegate:delegate usePhysicalSize:NO];
+
+    NSString *childPath = [_fixturePath stringByAppendingPathComponent:@"aaa-child"];
+    NSString *siblingPath = [_fixturePath stringByAppendingPathComponent:@"zzz-sibling"];
+    NSUInteger childExit = [[delegate events]
+        indexOfObject:[NSString stringWithFormat:@"exit:%@", childPath]];
+    NSUInteger siblingProcessed = [[delegate events]
+        indexOfObject:[NSString stringWithFormat:@"process:%@", siblingPath]];
+
+    XCTAssertNotEqual(childExit, NSNotFound);
+    XCTAssertNotEqual(siblingProcessed, NSNotFound);
+    XCTAssertLessThan(childExit, siblingProcessed);
 }
 
 - (void)testCancellationStopsTraversalAtPerItemCallback
@@ -298,6 +469,8 @@ BOOL g_EnableLogging = NO;
                                                                availableCapacity:@0] autorelease];
     physicalDelegate.progress = [[[VolumeScanProgress alloc] initWithTotalCapacity:@1000000
                                                                 availableCapacity:@0] autorelease];
+    logicalDelegate.collectVolumeProgressMetadata = YES;
+    physicalDelegate.collectVolumeProgressMetadata = YES;
     [self scanWithDelegate:logicalDelegate usePhysicalSize:NO];
     [self scanWithDelegate:physicalDelegate usePhysicalSize:YES];
 

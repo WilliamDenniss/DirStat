@@ -20,6 +20,7 @@
 #import "OmniCompatibility.h"
 #import "NSFileManager-Extensions.h"
 #import "VolumeScanProgress.h"
+#import "ClassificationItemCounter.h"
 
 NSString *CollectFileKindStatisticsCanceledException = @"CollectFileKindStatisticsCanceledException";
 
@@ -143,8 +144,6 @@ NSString *CollectFileKindStatisticsCanceledException = @"CollectFileKindStatisti
 
 - (void) recalculateTotalSize;
 
-- (NSUInteger) classificationItemCountForItem: (FSItem*) item includingChilds: (BOOL) includingChilds;
-
 - (NSMutableDictionary*) viewOptions;
 
 - (void) postViewOptionChangedNotificationForOption: (NSString*) optionName;
@@ -204,6 +203,7 @@ NSString *OldItem = @"OldItem";
 	
 	[_directoryStack release];
 	[_scanProgress release];
+	[_classificationItemCounter release];
 
 	[_kindColors release];
 	
@@ -265,17 +265,23 @@ NSString *OldItem = @"OldItem";
 		}
 
 		_scanProgress = [[VolumeScanProgress alloc] initWithTotalCapacity: totalCapacity
-												 availableCapacity: availableCapacity];
+											 availableCapacity: availableCapacity];
+		_volumeProgressMetadataRequired = [_scanProgress isDeterminate];
+		if ( _volumeProgressMetadataRequired )
+		{
+			_classificationItemCounter = [[ClassificationItemCounter alloc]
+				initWithShowPackageContents: [self showPackageContents]];
+		}
 		_progressController = [[LoadingPanelController alloc]
 							   initWithIndeterminateProgress: ![_scanProgress isDeterminate]];
-		if ( [_scanProgress isDeterminate] )
+		if ( _volumeProgressMetadataRequired )
 		{
 			[_progressController setProgressFraction: [_scanProgress progressFraction]];
 		}
 		
         [_rootItem loadChildren];
 
-		if ( [_scanProgress isDeterminate] )
+		if ( _volumeProgressMetadataRequired )
 		{
 			[_scanProgress finishScanning];
 			[_progressController setProgressFraction: [_scanProgress progressFraction]];
@@ -290,25 +296,36 @@ NSString *OldItem = @"OldItem";
         LOG(@"%u folders", g_folderCount );
         
 		//ok, now we've got an FSItem for every file and directory in the given folder
+		// The global counters cover descendants created by the enumerator; the
+		// separately-created root participates in classification as well.
+		NSUInteger discoveredItemCount = (NSUInteger)g_fileCount + (NSUInteger)g_folderCount;
+		if ( discoveredItemCount < NSUIntegerMax )
+			discoveredItemCount++;
+		NSUInteger classificationItemCount = _volumeProgressMetadataRequired
+			? [_classificationItemCounter itemCountForDiscoveredItemCount: discoveredItemCount]
+			: discoveredItemCount;
 		[_progressController setMessageText:
-		 [NSString stringWithFormat: NSLocalizedString( @"Classifying %u items\u2026", @"Progress shown after scanning a folder" ),
-		  g_fileCount + g_folderCount]];
-		if ( [_scanProgress isDeterminate] )
+		 [NSString stringWithFormat: NSLocalizedString( @"Classifying %lu items\u2026", @"Progress shown after scanning a folder" ),
+		  (unsigned long)classificationItemCount]];
+		if ( _volumeProgressMetadataRequired )
 		{
-			NSUInteger classificationItemCount = [self classificationItemCountForItem: [self zoomedItem]
-														 includingChilds: YES];
 			[_scanProgress beginClassificationWithItemCount: classificationItemCount];
 			[_progressController setProgressFraction: [_scanProgress progressFraction]];
 		}
+		[_classificationItemCounter release];
+		_classificationItemCounter = nil;
+		[_progressController flushPendingUpdates];
 		[_progressController runEventLoop];
 				
 		//collect sizes and file count of all file kinds 
+		_classifiedItemsSinceProgressUpdate = 0;
 		[self refreshFileKindStatistics];
 
-		if ( [_scanProgress isDeterminate] )
+		if ( _volumeProgressMetadataRequired )
 		{
 			[_scanProgress finish];
 			[_progressController setProgressFraction: [_scanProgress progressFraction]];
+			[_progressController flushPendingUpdates];
 			[_progressController runEventLoop];
 		}
 		
@@ -351,7 +368,11 @@ NSString *OldItem = @"OldItem";
         _directoryStack = nil;
 		[_scanProgress release];
 		_scanProgress = nil;
-    }
+		_volumeProgressMetadataRequired = NO;
+		_classifiedItemsSinceProgressUpdate = 0;
+		[_classificationItemCounter release];
+		_classificationItemCounter = nil;
+	}
         
    return YES;
 }
@@ -908,17 +929,20 @@ NSString *OldItem = @"OldItem";
 	
 	NSParameterAssert( [_directoryStack lastObject] == [item parent] );
 	[_directoryStack addObject: item];
+	[_classificationItemCounter enterDirectoryIsPackage: [item isPackage]
+												isRoot: [item isRoot]
+									discoveredItemCount: (NSUInteger)g_fileCount + (NSUInteger)g_folderCount];
 
 	// The root must be visible before the enumerator performs its first lookup.
 	// Descendant folders are reported as soon as they are discovered below,
 	// before the next enumerator call can block while entering them.
 	if ( [item isRoot] )
 	{
-		[_progressController setDirectoryPath: [item path]
-								itemCount: g_fileCount + g_folderCount];
+		[_progressController setDirectoryURL: [item fileURL]
+							   itemCount: g_fileCount + g_folderCount];
+		[_progressController flushPendingUpdates];
+		[_progressController runEventLoop];
 	}
-
-	[_progressController runEventLoop];
 	
 	return ![_progressController cancelPressed];
 }
@@ -930,7 +954,19 @@ NSString *OldItem = @"OldItem";
 		return YES; //YES == continue loading
 	
     NSAssert( [_directoryStack lastObject] == item, @"last stack object: %@, item: %@", [[_directoryStack lastObject] fileURL], [item fileURL] );
+	[_classificationItemCounter exitDirectoryIsPackage: [item isPackage]
+											   isRoot: [item isRoot]
+								   discoveredItemCount: (NSUInteger)g_fileCount + (NSUInteger)g_folderCount];
 	[_directoryStack removeLastObject];
+
+	// Keep only the latest directory context.  This does no formatting,
+	// painting, or event-loop work; the ordinary five-Hz tick will render it.
+	FSItem *parent = [_directoryStack lastObject];
+	if ( parent != nil )
+	{
+		[_progressController setDirectoryURL: [parent fileURL]
+								   itemCount: g_fileCount + g_folderCount];
+	}
 	
 	return YES;
 }
@@ -943,32 +979,32 @@ NSString *OldItem = @"OldItem";
 	unsigned itemCount = g_fileCount + g_folderCount;
 	BOOL isFolder = [item isFolder];
 
-	if ( [_scanProgress isDeterminate] && !isFolder )
+	if ( !isFolder && _volumeProgressMetadataRequired )
 	{
 		NSURL *itemURL = [item fileURL];
-		NSNumber *allocatedSize = [itemURL cachedPhysicalSize];
-		NSNumber *linkCount = [itemURL getCachedNumberValue: NSURLLinkCountKey];
-		id fileIdentifier = nil;
-		[itemURL getCachedResourceValue: &fileIdentifier
-							 forKey: NSURLFileResourceIdentifierKey
-							  error: nil];
+		NSNumber *allocatedSize = [itemURL physicalSize];
+		NSNumber *linkCount = [itemURL getNumberValue: NSURLLinkCountKey];
+		NSUInteger linkCountValue = linkCount == nil ? 1 : [linkCount unsignedIntegerValue];
+		id fileIdentifier = DIXFileIdentifierForVolumeProgress(itemURL, linkCountValue);
 
 		[_scanProgress recordAllocatedBytes: allocatedSize == nil ? 0 : [allocatedSize unsignedLongLongValue]
 							 fileIdentifier: fileIdentifier
-								 linkCount: linkCount == nil ? 1 : [linkCount unsignedIntegerValue]];
+								 linkCount: linkCountValue];
+		// Queue every byte-accounting change.  The controller retains only the
+		// latest monotonic value and still touches AppKit at most five times per
+		// second, so sparse scans visibly advance without rebuilding a UI queue.
 		[_progressController setProgressFraction: [_scanProgress progressFraction]];
 	}
 
-	// Updating the label is considerably more expensive than checking the
-	// event loop.  A directory is the exception: paint it before asking the
-	// enumerator for the next item so a slow or protected directory remains
-	// visible for debugging.
+	// Queue each discovered directory before asking the enumerator for the next
+	// item. LoadingPanelController retains only the latest URL and coalesces
+	// formatting and painting to its five-Hz UI tick.
 	if ( isFolder || itemCount == 1 || itemCount % 128 == 0 )
 	{
 		FSItem *currentFolder = [_directoryStack lastObject];
-		NSString *folderPath = isFolder ? [item path]
-			: (currentFolder == nil ? [[item parent] path] : [currentFolder path]);
-		[_progressController setDirectoryPath: folderPath itemCount: itemCount];
+		NSURL *folderURL = isFolder ? [item fileURL]
+			: (currentFolder == nil ? [[item parent] fileURL] : [currentFolder fileURL]);
+		[_progressController setDirectoryURL: folderURL itemCount: itemCount];
 	}
 
 	[_progressController runEventLoop];
@@ -988,6 +1024,11 @@ NSString *OldItem = @"OldItem";
 - (BOOL) fsItemShouldUsePhysicalFileSize: (FSItem*) item
 {
 	return [self showPhysicalFileSize];
+}
+
+- (BOOL) fsItemShouldCollectVolumeProgressMetadata: (FSItem*) item
+{
+	return _volumeProgressMetadataRequired;
 }
 
 #pragma mark --------KVO-----------------
@@ -1043,37 +1084,6 @@ NSString *OldItem = @"OldItem";
 	[[self rootItem] recalculateSize: [self showPhysicalFileSize] updateParent: NO];
 }
 
-- (NSUInteger) classificationItemCountForItem: (FSItem*) item includingChilds: (BOOL) includingChilds
-{
-	if ( item == nil )
-		return 0;
-
-	// Counting is an in-memory pass, but on a large scan it can still take long
-	// enough that the Cancel button must continue to be serviced.
-	if ( _progressController != nil )
-	{
-		[_progressController runEventLoop];
-		if ( [_progressController cancelPressed] )
-			[NSException raise: CollectFileKindStatisticsCanceledException format: @""];
-	}
-
-	NSUInteger itemCount = 1;
-	if ( [self itemIsNode: item] && includingChilds )
-	{
-		unsigned i = [item childCount];
-		while ( i-- )
-		{
-			NSUInteger childCount = [self classificationItemCountForItem: [item childAtIndex: i]
-													 includingChilds: YES];
-			if ( NSUIntegerMax - itemCount < childCount )
-				return NSUIntegerMax;
-			itemCount += childCount;
-		}
-	}
-
-	return itemCount;
-}
-
 - (void) addItemToFileKindStatistic: (FSItem*) item includingChilds: (BOOL) includingChilds
 {
 	if ( _progressController != nil )
@@ -1120,10 +1130,13 @@ NSString *OldItem = @"OldItem";
 
 	// Count an item only after its classification work (including any child
 	// traversal for a node) has completed.
-	if ( [_scanProgress isDeterminate] )
+	if ( _volumeProgressMetadataRequired )
 	{
 		[_scanProgress recordClassifiedItem];
-		[_progressController setProgressFraction: [_scanProgress progressFraction]];
+		if ( _classifiedItemsSinceProgressUpdate < NSUIntegerMax )
+			_classifiedItemsSinceProgressUpdate++;
+		if ( _classifiedItemsSinceProgressUpdate % 128 == 0 )
+			[_progressController setProgressFraction: [_scanProgress progressFraction]];
 	}
 }
 

@@ -8,6 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+// File identifiers are comparatively expensive filesystem metadata.  Volume
+// progress needs one only when an item can be a hard link; ordinary files must
+// not trigger the lookup.
+FOUNDATION_EXPORT id _Nullable DIXFileIdentifierForVolumeProgress(NSURL *_Nonnull URL,
+                                                                  NSUInteger linkCount);
+
 // Apple's documentation says: "For NSURL, all cached values (not temporary values) are automatically removed after each pass through the run loop."
 // This NSURL category adds the functionality to duplicate needed values as temporary resource values (which are not removed by the framework).
 

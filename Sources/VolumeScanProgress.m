@@ -96,6 +96,18 @@ double DIXMonotonicProgressFraction(double currentFraction,
 
 - (double)progressFraction
 {
+	if (_determinate && _phase == VolumeScanProgressPhaseClassification
+			 && _classificationItemCount != 0)
+    {
+        double classificationFraction =
+            (double)_classifiedItemCount / (double)_classificationItemCount;
+        double fraction = VolumeScanProgressScanningLimit
+            + classificationFraction * (1.0 - VolumeScanProgressScanningLimit);
+        if (fraction > VolumeScanProgressPrecompletionLimit)
+            fraction = VolumeScanProgressPrecompletionLimit;
+        [self setProgressFractionIfGreater:fraction];
+    }
+
     return _progressFraction;
 }
 
@@ -116,14 +128,16 @@ double DIXMonotonicProgressFraction(double currentFraction,
 
     if (UINT64_MAX - _scannedAllocatedBytes < bytes)
         _scannedAllocatedBytes = UINT64_MAX;
-    else
-        _scannedAllocatedBytes += bytes;
+	else
+		_scannedAllocatedBytes += bytes;
 
-    double accountedFraction = (double)_scannedAllocatedBytes / (double)_expectedUsedBytes;
-    if (accountedFraction > 1.0)
-        accountedFraction = 1.0;
+	double accountedFraction =
+		(double)_scannedAllocatedBytes / (double)_expectedUsedBytes;
+	if (accountedFraction > 1.0)
+		accountedFraction = 1.0;
+	[self setProgressFractionIfGreater:
+		accountedFraction * VolumeScanProgressScanningLimit];
 
-    [self setProgressFractionIfGreater:accountedFraction * VolumeScanProgressScanningLimit];
 }
 
 - (void)finishScanning
@@ -154,16 +168,6 @@ double DIXMonotonicProgressFraction(double currentFraction,
     if (_classifiedItemCount < _classificationItemCount)
         _classifiedItemCount++;
 
-    double classificationFraction =
-        (double)_classifiedItemCount / (double)_classificationItemCount;
-    double fraction = VolumeScanProgressScanningLimit
-        + classificationFraction * (1.0 - VolumeScanProgressScanningLimit);
-
-    // Successful completion is the only event that may expose exactly 100%.
-    if (fraction > VolumeScanProgressPrecompletionLimit)
-        fraction = VolumeScanProgressPrecompletionLimit;
-
-    [self setProgressFractionIfGreater:fraction];
 }
 
 - (void)finish

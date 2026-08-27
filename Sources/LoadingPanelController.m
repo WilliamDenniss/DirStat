@@ -7,7 +7,7 @@
 //
 
 #import "LoadingPanelController.h"
-#import "Timing.h"
+#import "LoadingPanelUpdateState.h"
 #import "VolumeScanProgress.h"
 
 
@@ -104,6 +104,9 @@
 - (void) initializeItemCountTextField;
 - (void) replaceProgressIndicatorWithDeterminateIndicatorAtFraction: (double) fraction;
 - (void) releaseItemCountTextField;
+- (NSTimeInterval) currentUpdateTime;
+- (void) flushPendingUpdatesAtTime: (NSTimeInterval) currentTime
+						 forceDisplay: (BOOL) forceDisplay;
 
 @end
 
@@ -118,6 +121,11 @@
 - (id) initWithIndeterminateProgress: (BOOL) indeterminate
 {
 	self = [super init];
+	if ( self == nil )
+		return nil;
+
+	_updateState = [[LoadingPanelUpdateState alloc]
+					 initWithMinimumUpdateInterval: 0.2];
 	
     //load Nib with progress panel
 	if ( ![NSBundle loadNibNamed: @"LoadingPanel" owner: self] )
@@ -134,8 +142,6 @@
 	
 	//start modal session for the progress window
 	_loadingPanelModalSession = [[NSApplication sharedApplication] beginModalSessionForWindow: _loadingPanel];
-	_lastEventLoopRun = 0;
-	
 	_cancelPressed = NO;
 	
 	return self;
@@ -144,6 +150,11 @@
 - (id) initAsSheetForWindow: (NSWindow*) window
 {
 	self = [super init];
+	if ( self == nil )
+		return nil;
+
+	_updateState = [[LoadingPanelUpdateState alloc]
+					 initWithMinimumUpdateInterval: 0.2];
 	
     //load Nib with progress panel
 	if ( ![NSBundle loadNibNamed: @"LoadingPanel" owner: self] )
@@ -163,8 +174,6 @@
 	//we don't have modal session if we show the panel as a sheet
 	_loadingPanelModalSession = 0;
 	
-	_lastEventLoopRun = 0;
-	
 	_cancelPressed = NO;
 	
 	return self;
@@ -176,7 +185,7 @@
 		[self close];
 
 	[_message release];
-	[_itemCountMessage release];
+	[_updateState release];
 	
 	[super dealloc];
 }
@@ -244,8 +253,6 @@
 - (void) initializeProgressIndicatorIndeterminate: (BOOL) indeterminate
 {
 	_progressIsIndeterminate = indeterminate;
-	_pendingProgressFraction = 0.0;
-	_displayedProgressFraction = 0.0;
 
 	if ( indeterminate )
 	{
@@ -337,9 +344,9 @@
 
 	_progressIsIndeterminate = indeterminate;
 	double preservedFraction = DIXMonotonicProgressFraction(
-		_displayedProgressFraction, _pendingProgressFraction );
-	_pendingProgressFraction = preservedFraction;
-	_displayedProgressFraction = preservedFraction;
+		[_updateState displayedProgressFraction],
+		[_updateState pendingProgressFraction] );
+	[_updateState queueProgressFraction: preservedFraction];
 
 	if ( indeterminate )
 	{
@@ -368,22 +375,7 @@
 
 - (void) setProgressFraction: (double) fraction
 {
-	double previousPendingFraction = _pendingProgressFraction;
-	_pendingProgressFraction = DIXMonotonicProgressFraction(
-		_pendingProgressFraction, fraction );
-	NSAssert( _pendingProgressFraction >= previousPendingFraction,
-			  @"queued progress must never decrease" );
-
-	// Completion immediately precedes closing the panel, so it cannot wait for
-	// the ordinary repaint throttle without risking that 100% is never drawn.
-	if ( !_progressIsIndeterminate && _pendingProgressFraction == 1.0
-		&& _pendingProgressFraction > _displayedProgressFraction )
-	{
-		_displayedProgressFraction = _pendingProgressFraction;
-		[_loadingProgressIndicator setDoubleValue: _displayedProgressFraction];
-		[_loadingProgressIndicator setNeedsDisplay: YES];
-		[_loadingProgressIndicator displayIfNeeded];
-	}
+	[_updateState queueProgressFraction: fraction];
 }
 
 - (void) setMessageText: (NSString*) msg
@@ -393,88 +385,93 @@
 	_message = msg;
 
 	if ( msg != nil )
-	{
-		[_itemCountMessage release];
-		_itemCountMessage = nil;
-		[_itemCountTextField setStringValue: @""];
-	}
+		[_updateState clearPendingDirectoryUpdate];
+}
+
+- (void) setDirectoryURL: (NSURL*) URL itemCount: (unsigned) itemCount
+{
+	[_message release];
+	_message = nil;
+	[_updateState queueDirectoryURL: URL itemCount: itemCount];
 }
 
 - (void) setDirectoryPath: (NSString*) path itemCount: (unsigned) itemCount
 {
-	NSString *message = [NSString stringWithFormat:
-						 NSLocalizedString( @"Scanning %@", @"Progress shown while scanning a folder" ),
-						 path == nil ? @"" : path];
-	[message retain];
-	[_message release];
-	_message = message;
+	NSURL *URL = path == nil ? nil : [NSURL fileURLWithPath: path];
+	[self setDirectoryURL: URL itemCount: itemCount];
+}
 
-	NSString *countMessage = [NSString stringWithFormat:
-							  NSLocalizedString( @"%u items found", @"Item count shown while scanning a folder" ),
-							  itemCount];
-	[countMessage retain];
-	[_itemCountMessage release];
-	_itemCountMessage = countMessage;
+- (NSTimeInterval) currentUpdateTime
+{
+	return [[NSProcessInfo processInfo] systemUptime];
+}
+
+- (void) flushPendingUpdatesAtTime: (NSTimeInterval) currentTime
+						 forceDisplay: (BOOL) forceDisplay
+
+{
+	if ( _message != nil )
+	{
+		[_loadingTextField setStringValue: _message];
+		[_itemCountTextField setStringValue: @""];
+		[_message release];
+		_message = nil;
+	}
+	else if ( [_updateState hasPendingDirectoryUpdate] )
+	{
+		NSString *path = [[_updateState pendingDirectoryURL] path];
+		NSString *message = [NSString stringWithFormat:
+			NSLocalizedString( @"Scanning %@", @"Progress shown while scanning a folder" ),
+			path == nil ? @"" : path];
+		NSString *countMessage = [NSString stringWithFormat:
+			NSLocalizedString( @"%u items found", @"Item count shown while scanning a folder" ),
+			[_updateState pendingItemCount]];
+		[_loadingTextField setStringValue: message];
+		[_itemCountTextField setStringValue: countMessage];
+	}
+
+	if ( !_progressIsIndeterminate && [_updateState hasPendingProgressUpdate] )
+	{
+		[_loadingProgressIndicator setDoubleValue:
+			[_updateState pendingProgressFraction]];
+		[_loadingProgressIndicator setNeedsDisplay: YES];
+	}
+
+	[_updateState noteFlushAtTime: currentTime];
+
+	if ( forceDisplay )
+		[_loadingPanel displayIfNeeded];
+
+	// Give the progress dialog some processor cycles.  Ordinary updates reach
+	// AppKit only on this tick; there is no per-directory synchronous drawing.
+	if ( _loadingPanelModalSession != 0 )
+	{
+		if ( [[NSApplication sharedApplication] runModalSession: _loadingPanelModalSession]
+															!= NSRunContinuesResponse )
+		{
+			NSAssert( NO, @"run loop stopped by unknown party" );
+		}
+	}
+	else
+	{
+		[[NSRunLoop currentRunLoop] runUntilDate: [NSDate date]];
+	}
+}
+
+- (void) flushPendingUpdates
+{
+	NSTimeInterval currentTime = [self currentUpdateTime];
+	if ( [_updateState shouldFlushAtTime: currentTime force: YES] )
+		[self flushPendingUpdatesAtTime: currentTime forceDisplay: YES];
 }
 
 - (void) runEventLoop
 {
-	//we only let the UI update itself every 0.2 second, otherwise running
-	//the event loop eats over half of the total scan time!
-	uint64_t currentTime = getTime();
-	BOOL runEventLoop = _lastEventLoopRun == 0 || subtractTime( currentTime, _lastEventLoopRun ) > 0.2;
-
-	if ( _message != nil )
-	{
-		[_loadingTextField setStringValue: _message];
-		
-		//set message to nil so it won't be set a again in the NSTextField
-		[self setMessageText: nil];
-			
-		//if we don't run the event loop, just update the text field
-		if ( !runEventLoop )
-			[_loadingTextField displayIfNeeded];
-	}
-
-	if ( _itemCountMessage != nil )
-	{
-		[_itemCountTextField setStringValue: _itemCountMessage];
-		[_itemCountMessage release];
-		_itemCountMessage = nil;
-
-		if ( !runEventLoop )
-			[_itemCountTextField displayIfNeeded];
-	}
-	
-	if ( runEventLoop )
-	{
-		_lastEventLoopRun = currentTime;
-
-		if ( !_progressIsIndeterminate &&
-			 _pendingProgressFraction > _displayedProgressFraction )
-		{
-			double previousDisplayedFraction = _displayedProgressFraction;
-			_displayedProgressFraction = _pendingProgressFraction;
-			NSAssert( _displayedProgressFraction >= previousDisplayedFraction,
-					  @"displayed progress must never decrease" );
-			[_loadingProgressIndicator setDoubleValue: _displayedProgressFraction];
-			[_loadingProgressIndicator setNeedsDisplay: YES];
-		}
-		
-		//give progress dialog some processor cycles
-		if ( _loadingPanelModalSession != 0 )
-		{
-			if ( [[NSApplication sharedApplication] runModalSession: _loadingPanelModalSession]
-																			!= NSRunContinuesResponse )
-			{
-				NSAssert( NO, @"run loop stopped by unknown party" );
-			}
-		}
-		else
-		{
-			[[NSRunLoop currentRunLoop] runUntilDate: [NSDate date]];
-		}
-	}
+	// AppKit work is capped at five updates per second.  Calls between ticks
+	// merely replace the retained latest values in LoadingPanelUpdateState.
+	NSTimeInterval currentTime = [self currentUpdateTime];
+	if ( [_updateState shouldFlushAtTime: currentTime force: NO] )
+		[self flushPendingUpdatesAtTime: currentTime forceDisplay: NO];
 }
 
 - (IBAction) cancel:(id)sender

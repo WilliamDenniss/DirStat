@@ -27,6 +27,12 @@
 		D1A000000000000000000015 /* NSURL-Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = FC33B459230C846F00133632 /* NSURL-Extensions.m */; };
 		D1A000000000000000000016 /* FSItemScannerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D1A000000000000000000007 /* FSItemScannerTests.m */; };
 		D1A000000000000000000017 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
+		D2B000000000000000000010 /* LoadingPanelUpdateState.m in Sources */ = {isa = PBXBuildFile; fileRef = D2B000000000000000000002 /* LoadingPanelUpdateState.m */; };
+		D2B000000000000000000011 /* ClassificationItemCounter.m in Sources */ = {isa = PBXBuildFile; fileRef = D2B000000000000000000004 /* ClassificationItemCounter.m */; };
+		D2B000000000000000000012 /* LoadingPanelUpdateState.m in Sources */ = {isa = PBXBuildFile; fileRef = D2B000000000000000000002 /* LoadingPanelUpdateState.m */; };
+		D2B000000000000000000013 /* ClassificationItemCounter.m in Sources */ = {isa = PBXBuildFile; fileRef = D2B000000000000000000004 /* ClassificationItemCounter.m */; };
+		D2B000000000000000000014 /* LoadingPanelUpdateStateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D2B000000000000000000005 /* LoadingPanelUpdateStateTests.m */; };
+		D2B000000000000000000015 /* ClassificationItemCounterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D2B000000000000000000006 /* ClassificationItemCounterTests.m */; };
 		FC2A428A2219C89900A484D7 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2A42892219C89900A484D7 /* AppController.m */; };
 		FC2E58FF21D3BFDF00F6F03B /* DirStat.png in Resources */ = {isa = PBXBuildFile; fileRef = FC2E58FE21D3BFDF00F6F03B /* DirStat.png */; };
 		FC33B45A230C846F00133632 /* NSURL-Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = FC33B459230C846F00133632 /* NSURL-Extensions.m */; };
@@ -127,6 +133,12 @@
 		D1A000000000000000000005 /* DirStatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DirStatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1A000000000000000000006 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
 		D1A000000000000000000007 /* FSItemScannerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FSItemScannerTests.m; sourceTree = "<group>"; };
+		D2B000000000000000000001 /* LoadingPanelUpdateState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadingPanelUpdateState.h; sourceTree = "<group>"; };
+		D2B000000000000000000002 /* LoadingPanelUpdateState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoadingPanelUpdateState.m; sourceTree = "<group>"; };
+		D2B000000000000000000003 /* ClassificationItemCounter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClassificationItemCounter.h; sourceTree = "<group>"; };
+		D2B000000000000000000004 /* ClassificationItemCounter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClassificationItemCounter.m; sourceTree = "<group>"; };
+		D2B000000000000000000005 /* LoadingPanelUpdateStateTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoadingPanelUpdateStateTests.m; sourceTree = "<group>"; };
+		D2B000000000000000000006 /* ClassificationItemCounterTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClassificationItemCounterTests.m; sourceTree = "<group>"; };
 		1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		2A37F4C4FDCFA73011CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		2A37F4C5FDCFA73011CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -591,6 +603,10 @@
 			children = (
 				D1A000000000000000000001 /* VolumeScanProgress.h */,
 				D1A000000000000000000002 /* VolumeScanProgress.m */,
+				D2B000000000000000000001 /* LoadingPanelUpdateState.h */,
+				D2B000000000000000000002 /* LoadingPanelUpdateState.m */,
+				D2B000000000000000000003 /* ClassificationItemCounter.h */,
+				D2B000000000000000000004 /* ClassificationItemCounter.m */,
 				FCCFB2F3097FA42B009EA2B6 /* FSItemIndex.h */,
 				FCCFB2F4097FA42B009EA2B6 /* FSItemIndex.m */,
 				FCCFB2F5097FA42B009EA2B6 /* LoadingPanelController.h */,
@@ -620,6 +636,8 @@
 			children = (
 				D1A000000000000000000007 /* FSItemScannerTests.m */,
 				D1A000000000000000000004 /* VolumeScanProgressTests.m */,
+				D2B000000000000000000005 /* LoadingPanelUpdateStateTests.m */,
+				D2B000000000000000000006 /* ClassificationItemCounterTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -817,6 +835,10 @@
 				D1A000000000000000000016 /* FSItemScannerTests.m in Sources */,
 				D1A000000000000000000011 /* VolumeScanProgress.m in Sources */,
 				D1A000000000000000000012 /* VolumeScanProgressTests.m in Sources */,
+				D2B000000000000000000012 /* LoadingPanelUpdateState.m in Sources */,
+				D2B000000000000000000013 /* ClassificationItemCounter.m in Sources */,
+				D2B000000000000000000014 /* LoadingPanelUpdateStateTests.m in Sources */,
+				D2B000000000000000000015 /* ClassificationItemCounterTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -832,6 +854,8 @@
 				FCE43AC2070B54E200E18050 /* TreeMapView.m in Sources */,
 				FB2609040000000000000001 /* OmniCompatibility.m in Sources */,
 				D1A000000000000000000010 /* VolumeScanProgress.m in Sources */,
+				D2B000000000000000000010 /* LoadingPanelUpdateState.m in Sources */,
+				D2B000000000000000000011 /* ClassificationItemCounter.m in Sources */,
 				FCCFB2AA097FA3FD009EA2B6 /* main.m in Sources */,
 				FCCFB303097FA42B009EA2B6 /* DIXTableView.m in Sources */,
 				FCCFB304097FA42B009EA2B6 /* DIXOutlineView.m in Sources */,

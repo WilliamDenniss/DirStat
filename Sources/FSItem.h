@@ -110,6 +110,7 @@ typedef enum
 - (BOOL) fsItemShouldLookIntoPackages: (FSItem*) item; //set kind string in "loadChilds?";
 													   //default is NO (if not implemented by delegate)
 - (BOOL) fsItemShouldUsePhysicalFileSize: (FSItem*) item;
+- (BOOL) fsItemShouldCollectVolumeProgressMetadata: (FSItem*) item; //prefetch allocated-size and hard-link metadata for determinate volume progress
 @end
 
 //Exception raised by FSItem

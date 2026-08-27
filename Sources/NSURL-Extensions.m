@@ -15,6 +15,18 @@ NS_ASSUME_NONNULL_BEGIN
 NSMutableDictionary<NSURL*, NSURL*> * g_Firmlinks = nil;
 NSString *firmlinkListFile = @"/usr/share/firmlinks";
 
+id DIXFileIdentifierForVolumeProgress(NSURL *URL, NSUInteger linkCount)
+{
+    if ( linkCount <= 1 )
+        return nil;
+
+    id fileIdentifier = nil;
+    [URL getResourceValue: &fileIdentifier
+                   forKey: NSURLFileResourceIdentifierKey
+                    error: nil];
+    return fileIdentifier;
+}
+
 void LoadFirmlinks()
 {
     if ( g_Firmlinks != nil )

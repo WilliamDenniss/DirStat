@@ -14,6 +14,7 @@
 #import "FileTypeColors.h"
 
 @class VolumeScanProgress;
+@class ClassificationItemCounter;
 
 //holds information about the count and size of the files of one kind (e.g. MP3 files)
 @interface FileKindStatistic : NSObject
@@ -55,6 +56,9 @@
 	LoadingPanelController *_progressController;
 	NSMutableArray *_directoryStack;
 	VolumeScanProgress *_scanProgress;
+	ClassificationItemCounter *_classificationItemCounter;
+	BOOL _volumeProgressMetadataRequired;
+	NSUInteger _classifiedItemsSinceProgressUpdate;
 }
 
 - (BOOL) showPhysicalFileSize;

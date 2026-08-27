@@ -8,17 +8,15 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class LoadingPanelUpdateState;
 
 @interface LoadingPanelController : NSObject
 {
 	NSModalSession _loadingPanelModalSession;
-	uint64_t _lastEventLoopRun;
 	BOOL _cancelPressed;
 	NSString *_message;
-	NSString *_itemCountMessage;
 	BOOL _progressIsIndeterminate;
-	double _pendingProgressFraction;
-	double _displayedProgressFraction;
+	LoadingPanelUpdateState *_updateState;
     IBOutlet NSTextField* _loadingTextField;
 	NSTextField *_itemCountTextField;
     IBOutlet NSPanel* _loadingPanel;
@@ -43,7 +41,9 @@
 - (void) setProgressFraction: (double) fraction;
 
 - (void) setMessageText: (NSString*) msg; //message will be shown next time "runEventLoop" is called
+- (void) setDirectoryURL: (NSURL*) URL itemCount: (unsigned) itemCount;
 - (void) setDirectoryPath: (NSString*) path itemCount: (unsigned) itemCount;
+- (void) flushPendingUpdates;
 - (void) runEventLoop;
 
 - (IBAction) cancel:(id)sender;
