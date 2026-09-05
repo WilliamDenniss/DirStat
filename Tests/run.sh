@@ -8,7 +8,7 @@ trap 'rm -rf "$TEST_DIR"' EXIT HUP INT TERM
 cd "$PROJECT_DIR"
 
 xcrun clang -fno-objc-arc -fblocks -isysroot "$(xcrun --show-sdk-path)" \
-    -I Sources -I Sources/CocoaTech-Depreciated -include 'Sources/Disk Inventory X_Prefix.pch' \
+    -I Sources -I Sources/CocoaTech-Depreciated -include 'Sources/DirStat_Prefix.pch' \
     -Wno-deprecated-declarations -Wno-nullability-completeness -Wno-error=int-conversion \
     -framework Cocoa -framework Carbon \
     Tests/RegressionTests.m Tests/UICompatibilityTests.m Tests/PreferenceResetTests.m \
@@ -20,7 +20,7 @@ xcrun clang -fno-objc-arc -fblocks -isysroot "$(xcrun --show-sdk-path)" \
 "$TEST_DIR/RegressionTests"
 
 xcrun clang -fno-objc-arc -fblocks -isysroot "$(xcrun --show-sdk-path)" \
-    -I Sources -include 'Sources/Disk Inventory X_Prefix.pch' \
+    -I Sources -include 'Sources/DirStat_Prefix.pch' \
     -Wno-deprecated-declarations -Wno-nullability-completeness \
     -framework Cocoa -framework Carbon \
     Tests/WindowLifecycleTests.m Sources/SelectionListController.m Sources/GenericArrayController.m \

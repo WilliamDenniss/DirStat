@@ -5,8 +5,8 @@
 //  Created by Tjark Derlien on 29.11.04.
 //  Copyright 2004 Tjark Derlien. All rights reserved.
 //
-// Copyright 2026 The DirStat Authors.
-// Modified 2026-09-04.
+//  Copyright 2026 The DirStat Authors.
+//  Modified 2026-09-05.
 
 #import "PrefsPageBase.h"
 #import "OmniCompatibility.h"

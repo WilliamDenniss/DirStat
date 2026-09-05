@@ -1,0 +1,16 @@
+//
+// Prefix header for all source files of the 'DirStat' target in the 'DirStat' project
+//
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-05.
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+    #import <Carbon/Carbon.h>
+
+    #import "OmniCompatibility.h"
+
+	//global variable which enables/disables logging
+	extern BOOL g_EnableLogging;
+	#define LOG(x, args...) { if (g_EnableLogging) NSLog(x, ## args); }
+#endif

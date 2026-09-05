@@ -5,8 +5,8 @@
 //  Created by Steve Gehrman on Sun Feb 02 2003.
 //  Copyright (c) 2003 CocoaTech. All rights reserved.
 //
-// Copyright 2026 The DirStat Authors.
-// Modified 2026-09-04.
+//  Copyright 2026 The DirStat Authors.
+//  Modified 2026-09-05.
 
 #import "NTFilePasteboardSource.h"
 #import "OmniCompatibility.h"

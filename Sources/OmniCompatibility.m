@@ -1,4 +1,5 @@
 // Copyright 2026 The DirStat Authors.
+// Modified 2026-09-05.
 //
 //  OmniCompatibility.m
 //  Disk Inventory X
@@ -17,6 +18,32 @@
     NSDictionary *defaults = [[registrations objectForKey:@"NSUserDefaults"] objectForKey:@"defaultsDictionary"];
     if (defaults != nil)
         [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+}
+
+- (void)orderFrontStandardAboutPanel:(id)sender
+{
+    NSBundle *bundle = [NSBundle mainBundle];
+    NSURL *creditsURL = [bundle URLForResource:@"Credits" withExtension:@"rtf"];
+    NSMutableAttributedString *credits = creditsURL == nil ? nil : [[[NSMutableAttributedString alloc]
+        initWithURL:creditsURL options:@{} documentAttributes:NULL error:NULL] autorelease];
+    NSURL *licenseURL = [bundle URLForResource:@"LICENSE" withExtension:nil];
+    if (credits == nil || licenseURL == nil)
+    {
+        [super orderFrontStandardAboutPanel:sender];
+        return;
+    }
+
+    // Resolve the relative license link for wherever the app is installed.
+    [credits enumerateAttribute:NSLinkAttributeName inRange:NSMakeRange(0, [credits length])
+        options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
+            if ([[value description] isEqualToString:@"LICENSE"])
+                [credits addAttribute:NSLinkAttributeName value:licenseURL range:range];
+        }];
+
+    // NSTextView opens file links with the system's default application.
+    [super orderFrontStandardAboutPanelWithOptions:@{
+        NSAboutPanelOptionCredits: credits
+    }];
 }
 
 @end

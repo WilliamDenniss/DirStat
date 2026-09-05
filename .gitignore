@@ -1,1 +1,4 @@
 /build/
+
+# Xcode per-user settings
+xcuserdata/

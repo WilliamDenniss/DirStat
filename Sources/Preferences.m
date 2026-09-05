@@ -1,14 +1,12 @@
-/*
- *  Preferences.m
- *  Disk Inventory X
- *
- *  Created by Tjark Derlien on 24.11.04.
- *  Copyright 2004 Tjark Derlien. All rights reserved.
- *
- */
-
-// Copyright 2026 The DirStat Authors.
-// Modified 2026-09-04.
+//
+//  Preferences.m
+//  Disk Inventory X
+//
+//  Created by Tjark Derlien on 24.11.04.
+//  Copyright 2004 Tjark Derlien. All rights reserved.
+//
+//  Copyright 2026 The DirStat Authors.
+//  Modified 2026-09-05.
 
 #include "Preferences.h"
 #import "OmniCompatibility.h"
@@ -25,7 +23,6 @@ NSString *UseSmallFontInSelectionList	= @"UseSmallFontInSelectionList";
 NSString *SplitWindowHorizontally		= @"SplitWindowHorizontally";
 NSString *AnimatedZooming				= @"AnimatedZooming";
 NSString *EnableLogging					= @"EnableLogging";
-NSString *DontShowDonationMessage        = @"DontShowDonationMessage";
 NSString *DontShowPrivacyWarningMessage        = @"DontShowPrivacyWarningMessage";
 NSString *ShareKindColors				= @"ShareKindColors";
 
@@ -164,4 +161,3 @@ NSString *ShareKindColors				= @"ShareKindColors";
 }
 
 @end
-
