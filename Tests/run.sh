@@ -8,23 +8,23 @@ trap 'rm -rf "$TEST_DIR"' EXIT HUP INT TERM
 cd "$PROJECT_DIR"
 
 xcrun clang -fno-objc-arc -fblocks -isysroot "$(xcrun --show-sdk-path)" \
-    -I . -I CocoaTech-Depreciated -include 'Disk Inventory X_Prefix.pch' \
+    -I Sources -I Sources/CocoaTech-Depreciated -include 'Sources/Disk Inventory X_Prefix.pch' \
     -Wno-deprecated-declarations -Wno-nullability-completeness -Wno-error=int-conversion \
     -framework Cocoa -framework Carbon \
     Tests/RegressionTests.m Tests/UICompatibilityTests.m Tests/PreferenceResetTests.m \
-    OmniCompatibility.m PrefsPanelController.m OAToolbarWindowControllerEx.m \
-    DIXTableView.m DIXOutlineView.m AppsForItem.m \
-    FSItem.m NSURL-Extensions.m CocoaTech-Depreciated/NTFilePasteboardSource.m \
+    Sources/OmniCompatibility.m Sources/PrefsPanelController.m Sources/OAToolbarWindowControllerEx.m \
+    Sources/DIXTableView.m Sources/DIXOutlineView.m Sources/AppsForItem.m \
+    Sources/FSItem.m Sources/NSURL-Extensions.m Sources/CocoaTech-Depreciated/NTFilePasteboardSource.m \
     -o "$TEST_DIR/RegressionTests"
 
 "$TEST_DIR/RegressionTests"
 
 xcrun clang -fno-objc-arc -fblocks -isysroot "$(xcrun --show-sdk-path)" \
-    -I . -include 'Disk Inventory X_Prefix.pch' \
+    -I Sources -include 'Sources/Disk Inventory X_Prefix.pch' \
     -Wno-deprecated-declarations -Wno-nullability-completeness \
     -framework Cocoa -framework Carbon \
-    Tests/WindowLifecycleTests.m SelectionListController.m GenericArrayController.m \
-    FSItemIndex.m Timing.c OmniCompatibility.m \
+    Tests/WindowLifecycleTests.m Sources/SelectionListController.m Sources/GenericArrayController.m \
+    Sources/FSItemIndex.m Sources/Timing.c Sources/OmniCompatibility.m \
     -o "$TEST_DIR/WindowLifecycleTests"
 
 "$TEST_DIR/WindowLifecycleTests"

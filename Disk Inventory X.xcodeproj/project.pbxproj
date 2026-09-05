@@ -136,8 +136,8 @@
 		FC2D7D7E21FE4ABC004D0614 /* de */ = {isa = PBXFileReference; lastKnownFileType = folder; name = de; path = de.lproj/Help; sourceTree = "<group>"; };
 		FC2DB78221AF4E1100F24C1E /* Disk Inventory X.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Disk Inventory X.entitlements"; sourceTree = "<group>"; };
 		FC2E58FE21D3BFDF00F6F03B /* Disk Inventory Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Disk Inventory Icon.png"; sourceTree = "<group>"; };
-		FC33B458230C846F00133632 /* NSURL-Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL-Extensions.h"; sourceTree = SOURCE_ROOT; };
-		FC33B459230C846F00133632 /* NSURL-Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL-Extensions.m"; sourceTree = SOURCE_ROOT; };
+		FC33B458230C846F00133632 /* NSURL-Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSURL-Extensions.h"; path = "Sources/NSURL-Extensions.h"; sourceTree = SOURCE_ROOT; };
+		FC33B459230C846F00133632 /* NSURL-Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSURL-Extensions.m"; path = "Sources/NSURL-Extensions.m"; sourceTree = SOURCE_ROOT; };
 		FC347F9822CBDF870002CDED /* TreeMapView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TreeMapView.framework; path = TreeMapView.framework; sourceTree = DIX_FRAMEWORK_DIR; };
 		FC42B8622202405A0080570A /* es */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = es; path = es.lproj/TreeMapPreferencesPage.nib; sourceTree = "<group>"; };
 		FC42B8632202405A0080570A /* es */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = es; path = es.lproj/GeneralPreferencesPage.nib; sourceTree = "<group>"; };
@@ -283,7 +283,7 @@
 		FCD71DB60984141E00590D16 /* known bugs.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = "known bugs.txt"; path = "documentation/known bugs.txt"; sourceTree = "<group>"; };
 		FCD71DB70984141E00590D16 /* release notes.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = "release notes.txt"; path = "documentation/release notes.txt"; sourceTree = "<group>"; };
 		FCEEFC0421FE5B6700E9785E /* de */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = de; path = de.lproj/FinderCMPreferencesPage.nib; sourceTree = "<group>"; };
-		FCFB17B521B876A400E3F8C4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "Disk Inventory X/Images.xcassets"; sourceTree = "<group>"; };
+		FCFB17B521B876A400E3F8C4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Images.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -331,7 +331,19 @@
 			children = (
 				FCB5709822CD2DE60014B794 /* BuildRelease.sh */,
 				FC2DB78221AF4E1100F24C1E /* Disk Inventory X.entitlements */,
+				FCCFB33A097FA44A009EA2B6 /* Info.plist */,
 				FCD71DB4098413FF00590D16 /* Documentation */,
+				FB2609050000000000000001 /* Sources */,
+				2A37F4B8FDCFA73011CA2CEA /* Resources */,
+				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
+				19C28FB0FE9D524F11CA2CBB /* Products */,
+			);
+			name = "Disk Inventory X";
+			sourceTree = "<group>";
+		};
+		FB2609050000000000000001 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
 				FCCFB2AB097FA42B009EA2B6 /* AppKit Extension */,
 				FC33B457230C842700133632 /* Foundation Extensions */,
 				FCCFB2B4097FA42B009EA2B6 /* OmniAppKitExtensions */,
@@ -346,11 +358,8 @@
 				FCCFB2C0097FA42B009EA2B6 /* Preferences */,
 				FCCFB2F0097FA42B009EA2B6 /* Main Classes */,
 				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
-				2A37F4B8FDCFA73011CA2CEA /* Resources */,
-				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
-				19C28FB0FE9D524F11CA2CBB /* Products */,
 			);
-			name = "Disk Inventory X";
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		2A37F4AFFDCFA73011CA2CEA /* Other Sources */ = {
@@ -382,12 +391,11 @@
 				FCCFB364097FA4C1009EA2B6 /* Localizable.strings */,
 				FCCFB34D097FA4C1009EA2B6 /* Credits.rtf */,
 				FCCFB360097FA4C1009EA2B6 /* InfoPlist.strings */,
-				FCCFB33A097FA44A009EA2B6 /* Info.plist */,
 				FC2E58FE21D3BFDF00F6F03B /* Disk Inventory Icon.png */,
 				FC4C4ABF09802035004CCA22 /* Help */,
 			);
 			includeInIndex = 0;
-			name = Resources;
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
@@ -801,7 +809,7 @@
 				FCA1D0C72205FF2D004E9468 /* fr */,
 			);
 			name = Help;
-			sourceTree = SOURCE_ROOT;
+			sourceTree = "<group>";
 		};
 		FCCFB34D097FA4C1009EA2B6 /* Credits.rtf */ = {
 			isa = PBXVariantGroup;
@@ -960,7 +968,7 @@
 				CURRENT_PROJECT_VERSION = 1.3;
 				DIX_FRAMEWORK_DIR = "$(SRCROOT)/build/TreeMap";
 				FRAMEWORK_SEARCH_PATHS = "$(DIX_FRAMEWORK_DIR)";
-				HEADER_SEARCH_PATHS = "$(SRCROOT)";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
@@ -993,7 +1001,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				DIX_FRAMEWORK_DIR = "$(SRCROOT)/build/TreeMap";
 				FRAMEWORK_SEARCH_PATHS = "$(DIX_FRAMEWORK_DIR)";
-				HEADER_SEARCH_PATHS = "$(SRCROOT)";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = "";
@@ -1019,7 +1027,7 @@
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Disk Inventory X_Prefix.pch";
+				GCC_PREFIX_HEADER = "Sources/Disk Inventory X_Prefix.pch";
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -1035,7 +1043,7 @@
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Disk Inventory X_Prefix.pch";
+				GCC_PREFIX_HEADER = "Sources/Disk Inventory X_Prefix.pch";
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
