@@ -22,6 +22,8 @@
 - (void) startProgressAnimation;
 - (void) stopProgressAnimation;
 - (BOOL) progressAnimationIsRunning;
+- (void) windowWillClose: (NSNotification*) notification;
+- (void) stopObservingKinds;
 
 @end
 
@@ -29,7 +31,18 @@
 
 - (void) awakeFromNib
 {
-	[_kindsPopupController addObserver: self forKeyPath: @"arrangedObjects" options: 0 context: nil];
+	if ( _observedKindsPopupController == nil && _kindsPopupController != nil )
+	{
+		// Nib outlets do not establish ownership under manual reference counting.
+		// Keep the observed object alive until our observation is removed.
+		_observedKindsPopupController = [_kindsPopupController retain];
+		[_observedKindsPopupController addObserver: self forKeyPath: @"arrangedObjects" options: 0 context: nil];
+		NSWindow *window = [_windowController window];
+		if ( window != nil )
+			[[NSNotificationCenter defaultCenter] addObserver: self
+				selector: @selector(windowWillClose:)
+				name: NSWindowWillCloseNotification object: window];
+	}
 	
 	_indexToSearch = FSItemIndexAll;
 	
@@ -40,10 +53,9 @@
 
 - (void) dealloc
 {
+	[self stopObservingKinds];
 	[_serachString release];
 	[_indexes release];
-	
-	[_kindsPopupController removeObserver: self forKeyPath: @"arrangedObjects"];
 	
 	[super dealloc];
 }
@@ -196,6 +208,27 @@
 
 @implementation SelectionListController(Privat)
 
+- (void) windowWillClose: (NSNotification*) notification
+{
+	[self stopObservingKinds];
+}
+
+- (void) stopObservingKinds
+{
+	[[NSNotificationCenter defaultCenter] removeObserver: self
+		name: NSWindowWillCloseNotification object: nil];
+
+	GenericArrayController *observedController = _observedKindsPopupController;
+	_observedKindsPopupController = nil;
+	if ( _kindsPopupController == observedController )
+		_kindsPopupController = nil;
+	if ( observedController != nil )
+	{
+		[observedController removeObserver: self forKeyPath: @"arrangedObjects"];
+		[observedController release];
+	}
+}
+
 - (FSItemIndex*) currentIndexWithItems: (NSArray*) items
 {
 	FileKindStatistic *kindStatistic = [super collectionModel];
@@ -284,4 +317,3 @@
 }
 
 @end
-

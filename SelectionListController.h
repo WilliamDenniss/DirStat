@@ -10,6 +10,8 @@
 //  Created by Tjark Derlien on 31.03.05.
 //  Copyright 2005 Tjark Derlien. All rights reserved.
 //
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-04.
 
 #import <Cocoa/Cocoa.h>
 #import "GenericArrayController.h"
@@ -21,6 +23,7 @@
 	IBOutlet NSProgressIndicator *_progressIndicator;
 	IBOutlet NSWindowController *_windowController;
 	IBOutlet GenericArrayController *_kindsPopupController;
+	GenericArrayController *_observedKindsPopupController;
 	IBOutlet NSSearchField *_searchField;
     NSString *_serachString;
 	NSMutableDictionary *_indexes;

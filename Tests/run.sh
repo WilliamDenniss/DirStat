@@ -18,3 +18,13 @@ xcrun clang -fno-objc-arc -fblocks -isysroot "$(xcrun --show-sdk-path)" \
     -o "$TEST_DIR/RegressionTests"
 
 "$TEST_DIR/RegressionTests"
+
+xcrun clang -fno-objc-arc -fblocks -isysroot "$(xcrun --show-sdk-path)" \
+    -I . -include 'Disk Inventory X_Prefix.pch' \
+    -Wno-deprecated-declarations -Wno-nullability-completeness \
+    -framework Cocoa -framework Carbon \
+    Tests/WindowLifecycleTests.m SelectionListController.m GenericArrayController.m \
+    FSItemIndex.m Timing.c OmniCompatibility.m \
+    -o "$TEST_DIR/WindowLifecycleTests"
+
+"$TEST_DIR/WindowLifecycleTests"
