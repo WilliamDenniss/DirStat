@@ -124,12 +124,18 @@ static void TestApplicationSorting(NSURL *fixture)
     NSURL *zeta = MakeDirectory(fixture, @"zeta.app");
     NSURL *alpha = MakeDirectory(fixture, @"Alpha.app");
     defaultApplication = MakeDirectory(fixture, @"beta.app");
-    NSURL *ownApp = MakeDirectory(fixture, @"Disk Inventory X.app");
+    NSURL *ownApp = [[NSBundle mainBundle] bundleURL];
+    NSURL *ownAppLink = [fixture URLByAppendingPathComponent:@"Renamed DirStat.app"];
+    CHECK([[NSFileManager defaultManager] createSymbolicLinkAtURL:ownAppLink
+                                             withDestinationURL:ownApp error:NULL]);
+    NSURL *otherDirStat = MakeDirectory(fixture, @"DirStat.app");
+    NSURL *upstreamApp = MakeDirectory(fixture, @"Disk Inventory X.app");
     NSURL *missing = [fixture URLByAppendingPathComponent:@"Gone.app"];
-    applicationCandidates = @[zeta, missing, defaultApplication, ownApp, alpha];
+    applicationCandidates = @[zeta, missing, defaultApplication, ownApp, ownAppLink,
+                              otherDirStat, upstreamApp, alpha];
     FixtureAppsForItem *apps = [[FixtureAppsForItem alloc] initWithItemURL:fixture];
     NSArray *result = [apps additionalAppURLs];
-    CHECK([result isEqualToArray:(@[alpha, zeta])]);
+    CHECK([result isEqualToArray:(@[alpha, otherDirStat, upstreamApp, zeta])]);
     CHECK([apps additionalAppURLs] == result);
     [apps release];
     applicationCandidates = nil;

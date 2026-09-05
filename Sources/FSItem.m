@@ -5,8 +5,8 @@
 //  Created by Tjark Derlien on Mon Sep 29 2003.
 //  Copyright (c) 2003 Tjark Derlien. All rights reserved.
 //
-// Copyright 2026 The DirStat Authors.
-// Modified 2026-09-04.
+//  Copyright 2026 The DirStat Authors.
+//  Modified 2026-09-05.
 
 #import "FSItem.h"
 #import "NSURL-Extensions.h"
@@ -554,7 +554,7 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
 		if ( kindName != nil )
 		{
 			//remember kind name for similar files
-			[g_kindNameDictionary setObject: kindName forKey: kindNameKey];Re: DiskInventory X is not compatible with MacOS Catalina (10.15)
+			[g_kindNameDictionary setObject: kindName forKey: kindNameKey];
 			
 			[fileDesc setKindString: kindName];
 			[kindName release];

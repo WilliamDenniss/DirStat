@@ -5,8 +5,8 @@
 //  Created by Tjark Derlien on 01.04.05.
 //  Copyright 2005 Tjark Derlien. All rights reserved.
 //
-// Copyright 2026 The DirStat Authors.
-// Modified 2026-09-04.
+//  Copyright 2026 The DirStat Authors.
+//  Modified 2026-09-05.
 
 #import "FSItemIndex.h"
 #import "OmniCompatibility.h"

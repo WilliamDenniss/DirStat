@@ -5,8 +5,8 @@
 //  Created by Tjark Derlien on 20.01.06.
 //  Copyright 2006 Tjark Derlien. All rights reserved.
 //
-// Copyright 2026 The DirStat Authors.
-// Modified 2026-09-04.
+//  Copyright 2026 The DirStat Authors.
+//  Modified 2026-09-05.
 
 #import "AppsForItem.h"
 #import "NSURL-Extensions.h"
@@ -131,12 +131,14 @@
 	if ( [appName length] == 0 )
 		return NO;
 
-	BOOL isDIX = [appName isEqualToString: @"Disk Inventory X.app"];
+	NSURL *standardizedAppURL = [[appURL URLByResolvingSymlinksInPath] URLByStandardizingPath];
+	NSURL *standardizedMainBundleURL = [[[[NSBundle mainBundle] bundleURL] URLByResolvingSymlinksInPath] URLByStandardizingPath];
+	BOOL isCurrentApp = [standardizedAppURL isEqualToURL: standardizedMainBundleURL];
 	BOOL isFinder = [appName isEqualToString: @"Finder.app"];
 	
 	//filter out the Finder (for simple folders, the Finder is returned by "LSGetApplicationForItem" and "LSCopyApplicationURLsForURL")
 	//it would be better to identify the Finder by it's bundle identifier, but then we would have to load it's bundle (?)
-	return !isDIX
+	return !isCurrentApp
 			&& ( [appURL isFile]
 				 || [appURL isPackage] 
 				 || !isFinder );

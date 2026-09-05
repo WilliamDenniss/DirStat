@@ -1,7 +1,7 @@
-/* MainWindowController */
-
+// MainWindowController
+//
 // Copyright 2026 The DirStat Authors.
-// Modified 2026-09-04.
+// Modified 2026-09-05.
 
 #import <Cocoa/Cocoa.h>
 #import "FileSystemDoc.h"

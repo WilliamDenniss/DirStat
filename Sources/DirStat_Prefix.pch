@@ -1,8 +1,8 @@
 //
-// Prefix header for all source files of the 'Disk Inventory X' target in the 'Disk Inventory X' project
+// Prefix header for all source files of the 'DirStat' target in the 'DirStat' project
 //
 // Copyright 2026 The DirStat Authors.
-// Modified 2026-09-04.
+// Modified 2026-09-05.
 
 #ifdef __OBJC__
     #import <Cocoa/Cocoa.h>

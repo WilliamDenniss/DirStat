@@ -5,6 +5,8 @@
 //  Created by Tjark Derlien on Wed Oct 08 2003.
 //  Copyright (c) 2003 Tjark Derlien. All rights reserved.
 //
+//  Copyright 2026 The DirStat Authors.
+//  Modified 2026-09-05.
 
 #import "MyDocumentController.h"
 #import "DrivesPanelController.h"
@@ -146,15 +148,9 @@ BOOL g_EnableLogging;
 	//[[OAPreferenceController sharedPreferenceController] showPreferencesPanel: self];
 }
 
-- (IBAction) gotoHomepage: (id) sender
+- (IBAction) openDocumentation: (id) sender
 {
-	[[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: @"http://www.derlien.com"]];
-}
-
-- (IBAction) closeDonationPanel: (id) sender;
-{
-	[_donationPanel close]; //will release itself
-	_donationPanel = nil;
+	[[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: @"https://dirstat.com/mac/docs/"]];
 }
 
 
@@ -173,23 +169,6 @@ BOOL g_EnableLogging;
 	//show the drives panel before "applicationDidFinishLaunching" so the panel is visible before the first document is loaded
 	//(e.g. through drag&drop)
 	[[DrivesPanelController sharedController] showPanel];
-}
-
-- (void) applicationDidFinishLaunching:(NSNotification *)notification
-{
-    //@@test
-    //[[OAController sharedController] applicationDidFinishLaunching:notification];
-
-    //show donate message
-	if ( ![[NSUserDefaults standardUserDefaults] boolForKey: DontShowDonationMessage] )
-	{
-		[NSBundle loadNibNamed: @"DonationPanel" owner:self];
-		[_donationPanel setWorksWhenModal: YES];
-	}
-	
-//	DIXFinderCMInstaller *installer = [DIXFinderCMInstaller installer];
-//	if ( ![installer isInstalled] )
-//		[installer installToDomain: kUserDomain];
 }
 
 #pragma mark -----------------NSMenu delegates-----------------------
@@ -231,4 +210,3 @@ BOOL g_EnableLogging;
 }
 
 @end
-

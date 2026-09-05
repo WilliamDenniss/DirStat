@@ -1,6 +1,6 @@
 #!/bin/sh
 # Copyright 2026 The DirStat Authors.
-# Modified 2026-09-04.
+# Modified 2026-09-05.
 
 set -eu
 
@@ -23,11 +23,11 @@ xcodebuild \
     build
 
 xcodebuild \
-    -project "$SCRIPT_DIR/Disk Inventory X.xcodeproj" \
-    -scheme 'Disk Inventory X' \
+    -project "$SCRIPT_DIR/DirStat.xcodeproj" \
+    -scheme 'DirStat' \
     -configuration Release \
     -destination 'generic/platform=macOS' \
-    -derivedDataPath "$BUILD_DIR/DerivedData/DiskInventoryX" \
+    -derivedDataPath "$BUILD_DIR/DerivedData/DirStat" \
     CONFIGURATION_BUILD_DIR="$BUILD_DIR/Release" \
     DIX_FRAMEWORK_DIR="$BUILD_DIR/TreeMap" \
     ALWAYS_SEARCH_USER_PATHS=NO \
@@ -35,7 +35,7 @@ xcodebuild \
     ONLY_ACTIVE_ARCH=NO \
     build
 
-APP="$BUILD_DIR/Release/Disk Inventory X.app"
+APP="$BUILD_DIR/Release/DirStat.app"
 # Sign nested code first; this is a local ad-hoc build, with no developer account.
 codesign --force --sign - "$APP/Contents/Frameworks/TreeMapView.framework"
 codesign --force --sign - "$APP"

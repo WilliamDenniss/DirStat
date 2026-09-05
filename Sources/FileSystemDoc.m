@@ -5,8 +5,8 @@
 //  Created by Tjark Derlien on Wed Oct 08 2003.
 //  Copyright (c) 2003 Tjark Derlien. All rights reserved.
 //
-// Copyright 2026 The DirStat Authors.
-// Modified 2026-09-04.
+//  Copyright 2026 The DirStat Authors.
+//  Modified 2026-09-05.
 
 #import "DIXLocalization.h"
 #import "FileSystemDoc.h"
@@ -559,7 +559,7 @@ NSString *OldItem = @"OldItem";
 	{
 		//the folder/volume which we are showing doesn't exist anymore!
         NSString *msg = [NSString stringWithFormat: @"\"%@\" does not exist any more.", [[self rootItem] displayPath]];
-        NSString *subMsg = NSLocalizedString( @"The folder will remain visible in Disk Inventory X, but the files cannot be accessed (e.g. shown in the Finder).",@"");
+        NSString *subMsg = NSLocalizedString( @"The folder will remain visible in DirStat, but the files cannot be accessed (e.g. shown in the Finder).",@"");
         
         NSBeginInformationalAlertSheet( msg,
                                        DIXLocalizedString(@"OK"),
@@ -1135,7 +1135,7 @@ NSString *OldItem = @"OldItem";
             
             alert.alertStyle = NSAlertStyleInformational;
             
-            alert.messageText = NSLocalizedString(@"Some folders which will be scanned contain private files. The access is protected by the macOS privacy protection.\n\nUpon first access macOS will ask whether you allow Disk Inventory X access to these folders and files.\n\nDisk Inventory X does not read any data - just information like file sizes and types are collected.", @"");
+            alert.messageText = NSLocalizedString(@"Some folders which will be scanned contain private files. The access is protected by the macOS privacy protection.\n\nUpon first access macOS will ask whether you allow DirStat access to these folders and files.\n\nDirStat does not read any data - just information like file sizes and types are collected.", @"");
             alert.informativeText = NSLocalizedString(@"You can change the access settings in the System Preferences (Security/Privacy).", @"");
             
             alert.showsSuppressionButton = YES;

@@ -1,11 +1,12 @@
-/*
- *  Preferences.h
- *  Disk Inventory X
- *
- *  Created by Tjark Derlien on 24.11.04.
- *  Copyright 2004 Tjark Derlien. All rights reserved.
- *
- */
+//
+//  Preferences.h
+//  Disk Inventory X
+//
+//  Created by Tjark Derlien on 24.11.04.
+//  Copyright 2004 Tjark Derlien. All rights reserved.
+//
+//  Copyright 2026 The DirStat Authors.
+//  Modified 2026-09-05.
 
 #import <Cocoa/Cocoa.h>
 
@@ -21,7 +22,6 @@ extern NSString *UseSmallFontInSelectionList;
 extern NSString *SplitWindowHorizontally;
 extern NSString *AnimatedZooming;
 extern NSString *EnableLogging;
-extern NSString *DontShowDonationMessage;
 extern NSString *DontShowPrivacyWarningMessage;
 extern NSString *ShareKindColors;
 
