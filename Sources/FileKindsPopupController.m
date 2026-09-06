@@ -5,10 +5,12 @@
 //  Created by Tjark Derlien on 31.03.05.
 //  Copyright 2005 Tjark Derlien. All rights reserved.
 //
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-05.
 
 #import "FileKindsPopupController.h"
-#import <TreeMapView/TMVCushionRenderer.h>
-#import <TreeMapView/NSBitmapImageRep-CreationExtensions.h>
+#import "TreeMapView/TMVCushionRenderer.h"
+#import "TreeMapView/NSBitmapImageRep-CreationExtensions.h"
 
 
 @implementation FileKindStatistic(AllKinds)

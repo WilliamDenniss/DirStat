@@ -5,7 +5,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "FileSystemDoc.h"
-#import <TreeMapView/TreeMapView.h>
+#import "TreeMapView/TreeMapView.h"
 #import "OAToolbarWindowControllerEx.h"
 #import "OmniCompatibility.h"
 
