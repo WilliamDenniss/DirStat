@@ -5,9 +5,11 @@
 //  Created by Tjark Derlien on Sun Oct 05 2003.
 //  Copyright (c) 2003 Tjark Derlien. All rights reserved.
 //
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-05.
 
 #import "FileTypeColors.h"
-#import <TreeMapView/TMVCushionRenderer.h>
+#import "TreeMapView/TMVCushionRenderer.h"
 
 @implementation FileTypeColors
 

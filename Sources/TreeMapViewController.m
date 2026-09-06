@@ -5,9 +5,11 @@
 //  Created by Tjark Derlien on Mon Sep 29 2003.
 //  Copyright (c) 2003 Tjark Derlien. All rights reserved.
 //
+// Copyright 2026 The DirStat Authors.
+// Modified 2026-09-05.
 
 #import "TreeMapViewController.h"
-#import <TreeMapView/TreeMapView.h>
+#import "TreeMapView/TreeMapView.h"
 #import "MainWindowController.h"
 #import "FileSizeFormatter.h"
 #import "FSItem-Utilities.h"

@@ -7,17 +7,19 @@ and folder sizes in a treemap, with colors indicating file types.
 
 Requires Xcode 26 or later, selected as the default for command-line builds.
 
+Open `DirStat.xcodeproj`, select the `DirStat` scheme, and Build or Run.
+
+For a universal Apple Silicon / Intel release build:
+
 ```sh
 ./BuildRelease.sh
 ```
 
-Builds the included TreeMapView framework and a universal Apple Silicon / Intel
-app, signed ad hoc for local use. No Apple developer account is required.
+Both Xcode and the script sign the app ad hoc for local use.
+No Apple developer account is required.
 
 Output: `build/Release/DirStat.app`. Set `DIX_BUILD_DIR` to change the
-build directory. For builds in Xcode, run the script first to build TreeMapView.
-If using a custom build directory, set `DIX_FRAMEWORK_DIR` to the directory
-containing `TreeMapView.framework`.
+build directory used by the script.
 
 ## Tests
 

@@ -10,8 +10,8 @@
 
 #import "FileKindsTableController.h"
 #import "OmniCompatibility.h"
-#import <TreeMapView/TMVCushionRenderer.h>
-#import <TreeMapView/NSBitmapImageRep-CreationExtensions.h>
+#import "TreeMapView/TMVCushionRenderer.h"
+#import "TreeMapView/NSBitmapImageRep-CreationExtensions.h"
 #import "Preferences.h"
 #import "MainWindowController.h"
 

@@ -9,14 +9,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FC08297522136FC400728CFE /* NSView-BackingCoordsHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = FC08297322136FC400728CFE /* NSView-BackingCoordsHelpers.m */; };
+		FCA4C9A9075CB9E60064125F /* ZoomInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA4C9A7075CB9E60064125F /* ZoomInfo.m */; };
+		FCB5721F0726D85100AE06A1 /* NSBitmapImageRep-CreationExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB5721D0726D85100AE06A1 /* NSBitmapImageRep-CreationExtensions.m */; };
+		FCE43ABE070B54E200E18050 /* TMVCushionRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = FCE43AB8070B54E200E18050 /* TMVCushionRenderer.m */; };
+		FCE43AC0070B54E200E18050 /* TMVItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FCE43ABA070B54E200E18050 /* TMVItem.m */; };
+		FCE43AC2070B54E200E18050 /* TreeMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = FCE43ABC070B54E200E18050 /* TreeMapView.m */; };
 		FB2609040000000000000001 /* OmniCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = FB2609040000000000000002 /* OmniCompatibility.m */; };
 		FB2609040000000000000005 /* FileOperations.strings in Resources */ = {isa = PBXBuildFile; fileRef = FB2609040000000000000006 /* FileOperations.strings */; };
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 		FC2A428A2219C89900A484D7 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2A42892219C89900A484D7 /* AppController.m */; };
 		FC2E58FF21D3BFDF00F6F03B /* DirStat.png in Resources */ = {isa = PBXBuildFile; fileRef = FC2E58FE21D3BFDF00F6F03B /* DirStat.png */; };
 		FC33B45A230C846F00133632 /* NSURL-Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = FC33B459230C846F00133632 /* NSURL-Extensions.m */; };
-		FC347FA022CBDFE60002CDED /* TreeMapView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC347F9822CBDF870002CDED /* TreeMapView.framework */; };
-		FC347FA722CBE0340002CDED /* TreeMapView.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FC347F9822CBDF870002CDED /* TreeMapView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FC4C4FF70981520A004CCA22 /* AppsForItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FC4C4FF50981520A004CCA22 /* AppsForItem.m */; };
 		FC7F775D1067BAB10090E839 /* NTFilePasteboardSource.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7F775C1067BAB10090E839 /* NTFilePasteboardSource.m */; };
 		FC7F77641067BC310090E839 /* NTInfoView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC7F77631067BC310090E839 /* NTInfoView.m */; };
@@ -87,20 +91,19 @@
 		FCFB17B621B876A400E3F8C4 /* DirStat.icon in Resources */ = {isa = PBXBuildFile; fileRef = FCFB17B521B876A400E3F8C4 /* DirStat.icon */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		FCED9ED9106ABB4D00667E44 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				FC347FA722CBE0340002CDED /* TreeMapView.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		FC08297222136FC400728CFE /* NSView-BackingCoordsHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSView-BackingCoordsHelpers.h"; sourceTree = "<group>"; };
+		FC08297322136FC400728CFE /* NSView-BackingCoordsHelpers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSView-BackingCoordsHelpers.m"; sourceTree = "<group>"; };
+		FCA4C9A6075CB9E60064125F /* ZoomInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomInfo.h; sourceTree = "<group>"; };
+		FCA4C9A7075CB9E60064125F /* ZoomInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZoomInfo.m; sourceTree = "<group>"; };
+		FCB5721C0726D85100AE06A1 /* NSBitmapImageRep-CreationExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBitmapImageRep-CreationExtensions.h"; sourceTree = "<group>"; };
+		FCB5721D0726D85100AE06A1 /* NSBitmapImageRep-CreationExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBitmapImageRep-CreationExtensions.m"; sourceTree = "<group>"; };
+		FCE43AB7070B54E200E18050 /* TMVCushionRenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TMVCushionRenderer.h; sourceTree = "<group>"; };
+		FCE43AB8070B54E200E18050 /* TMVCushionRenderer.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TMVCushionRenderer.m; sourceTree = "<group>"; };
+		FCE43AB9070B54E200E18050 /* TMVItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TMVItem.h; sourceTree = "<group>"; };
+		FCE43ABA070B54E200E18050 /* TMVItem.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TMVItem.m; sourceTree = "<group>"; };
+		FCE43ABB070B54E200E18050 /* TreeMapView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TreeMapView.h; sourceTree = "<group>"; };
+		FCE43ABC070B54E200E18050 /* TreeMapView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TreeMapView.m; sourceTree = "<group>"; };
 		FB260904000000000000000A /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/FileOperations.strings; sourceTree = "<group>"; };
 		FB2609040000000000000009 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/FileOperations.strings; sourceTree = "<group>"; };
 		FB2609040000000000000008 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/FileOperations.strings; sourceTree = "<group>"; };
@@ -130,7 +133,6 @@
 		FC2E58FE21D3BFDF00F6F03B /* DirStat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DirStat.png"; sourceTree = "<group>"; };
 		FC33B458230C846F00133632 /* NSURL-Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSURL-Extensions.h"; path = "Sources/NSURL-Extensions.h"; sourceTree = SOURCE_ROOT; };
 		FC33B459230C846F00133632 /* NSURL-Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSURL-Extensions.m"; path = "Sources/NSURL-Extensions.m"; sourceTree = SOURCE_ROOT; };
-		FC347F9822CBDF870002CDED /* TreeMapView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TreeMapView.framework; path = TreeMapView.framework; sourceTree = DIX_FRAMEWORK_DIR; };
 		FC42B8622202405A0080570A /* es */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = es; path = es.lproj/TreeMapPreferencesPage.nib; sourceTree = "<group>"; };
 		FC42B8632202405A0080570A /* es */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = es; path = es.lproj/GeneralPreferencesPage.nib; sourceTree = "<group>"; };
 		FC42B8642202405A0080570A /* es */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = es; path = es.lproj/FinderCMPreferencesPage.nib; sourceTree = "<group>"; };
@@ -275,13 +277,31 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
-				FC347FA022CBDFE60002CDED /* TreeMapView.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FB2609050000000000000002 /* TreeMapView */ = {
+			isa = PBXGroup;
+			children = (
+				FC08297222136FC400728CFE /* NSView-BackingCoordsHelpers.h */,
+				FC08297322136FC400728CFE /* NSView-BackingCoordsHelpers.m */,
+				FCA4C9A6075CB9E60064125F /* ZoomInfo.h */,
+				FCA4C9A7075CB9E60064125F /* ZoomInfo.m */,
+				FCB5721C0726D85100AE06A1 /* NSBitmapImageRep-CreationExtensions.h */,
+				FCB5721D0726D85100AE06A1 /* NSBitmapImageRep-CreationExtensions.m */,
+				FCE43AB7070B54E200E18050 /* TMVCushionRenderer.h */,
+				FCE43AB8070B54E200E18050 /* TMVCushionRenderer.m */,
+				FCE43AB9070B54E200E18050 /* TMVItem.h */,
+				FCE43ABA070B54E200E18050 /* TMVItem.m */,
+				FCE43ABB070B54E200E18050 /* TreeMapView.h */,
+				FCE43ABC070B54E200E18050 /* TreeMapView.m */,
+			);
+			path = TreeMapView;
+			sourceTree = "<group>";
+		};
 		1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -326,6 +346,7 @@
 		FB2609050000000000000001 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				FB2609050000000000000002 /* TreeMapView */,
 				FCCFB2AB097FA42B009EA2B6 /* AppKit Extension */,
 				FC33B457230C842700133632 /* Foundation Extensions */,
 				FCCFB2B4097FA42B009EA2B6 /* OmniAppKitExtensions */,
@@ -381,7 +402,6 @@
 		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				FC347F9822CBDF870002CDED /* TreeMapView.framework */,
 				1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */,
 				1058C7A8FEA54F5311CA2CBB /* Other Frameworks */,
 			);
@@ -607,7 +627,6 @@
 				8D15AC2B0486D014006FF6A4 /* Resources */,
 				8D15AC300486D014006FF6A4 /* Sources */,
 				8D15AC330486D014006FF6A4 /* Frameworks */,
-				FCED9ED9106ABB4D00667E44 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -704,6 +723,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC08297522136FC400728CFE /* NSView-BackingCoordsHelpers.m in Sources */,
+				FCA4C9A9075CB9E60064125F /* ZoomInfo.m in Sources */,
+				FCB5721F0726D85100AE06A1 /* NSBitmapImageRep-CreationExtensions.m in Sources */,
+				FCE43ABE070B54E200E18050 /* TMVCushionRenderer.m in Sources */,
+				FCE43AC0070B54E200E18050 /* TMVItem.m in Sources */,
+				FCE43AC2070B54E200E18050 /* TreeMapView.m in Sources */,
 				FB2609040000000000000001 /* OmniCompatibility.m in Sources */,
 				FCCFB2AA097FA3FD009EA2B6 /* main.m in Sources */,
 				FCCFB303097FA42B009EA2B6 /* DIXTableView.m in Sources */,
@@ -902,31 +927,23 @@
 		C05733C808A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = DirStat;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DIX_FRAMEWORK_DIR = "$(SRCROOT)/build/TreeMap";
-				FRAMEWORK_SEARCH_PATHS = "$(DIX_FRAMEWORK_DIR)";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_VERSION = "";
 				INFOPLIST_FILE = Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MARKETING_VERSION = 2.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dirstat.DirStat;
 				PRODUCT_NAME = "DirStat";
 				SDKROOT = macosx;
-				SWIFT_VERSION = 4.2;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -934,30 +951,22 @@
 		C05733C908A9546B00998B17 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = DirStat;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
-				DIX_FRAMEWORK_DIR = "$(SRCROOT)/build/TreeMap";
-				FRAMEWORK_SEARCH_PATHS = "$(DIX_FRAMEWORK_DIR)";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = "";
 				INFOPLIST_FILE = Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dirstat.DirStat;
 				PRODUCT_NAME = "DirStat";
 				SDKROOT = macosx;
-				SWIFT_VERSION = 4.2;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -965,9 +974,9 @@
 		C05733CC08A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Sources/DirStat_Prefix.pch";
 				GCC_VERSION = "";
@@ -983,6 +992,7 @@
 		C05733CD08A9546B00998B17 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Sources/DirStat_Prefix.pch";
