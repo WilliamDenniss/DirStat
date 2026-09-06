@@ -9,6 +9,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FB2609050000000000000003 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = FB2609050000000000000004 /* LICENSE */; };
 		FC08297522136FC400728CFE /* NSView-BackingCoordsHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = FC08297322136FC400728CFE /* NSView-BackingCoordsHelpers.m */; };
 		FCA4C9A9075CB9E60064125F /* ZoomInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA4C9A7075CB9E60064125F /* ZoomInfo.m */; };
 		FCB5721F0726D85100AE06A1 /* NSBitmapImageRep-CreationExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB5721D0726D85100AE06A1 /* NSBitmapImageRep-CreationExtensions.m */; };
@@ -92,6 +93,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FB2609050000000000000004 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		FC08297222136FC400728CFE /* NSView-BackingCoordsHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSView-BackingCoordsHelpers.h"; sourceTree = "<group>"; };
 		FC08297322136FC400728CFE /* NSView-BackingCoordsHelpers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSView-BackingCoordsHelpers.m"; sourceTree = "<group>"; };
 		FCA4C9A6075CB9E60064125F /* ZoomInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomInfo.h; sourceTree = "<group>"; };
@@ -335,6 +337,7 @@
 				FCB5709822CD2DE60014B794 /* BuildRelease.sh */,
 				FC2DB78221AF4E1100F24C1E /* DirStat.entitlements */,
 				FCCFB33A097FA44A009EA2B6 /* Info.plist */,
+				FB2609050000000000000004 /* LICENSE */,
 				FB2609050000000000000001 /* Sources */,
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
 				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
@@ -683,6 +686,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB2609050000000000000003 /* LICENSE in Resources */,
 				FCCFB33C097FA44A009EA2B6 /* MainWindowToolbar.toolbar in Resources */,
 				FCCFB33D097FA44A009EA2B6 /* ZoomOut.tiff in Resources */,
 				FCCFB33E097FA44A009EA2B6 /* ZoomIn.tiff in Resources */,
