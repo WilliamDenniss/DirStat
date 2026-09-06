@@ -2,3 +2,5 @@
 
 # Xcode per-user settings
 xcuserdata/
+
+/.env
