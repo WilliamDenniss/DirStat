@@ -1,6 +1,6 @@
 #!/bin/sh
 # Copyright 2026 The DirStat Authors.
-# Modified 2026-09-05.
+# Modified 2026-09-06.
 
 # Never trace credentials, including when invoked with sh -x.
 set +x
@@ -43,6 +43,14 @@ esac
 for tool in xcodebuild xcrun security codesign ditto hdiutil plutil spctl; do
     command -v "$tool" >/dev/null 2>&1 || fail "Required tool is missing: $tool"
 done
+USE_CREATE_DMG=0
+if command -v create-dmg >/dev/null 2>&1; then
+    USE_CREATE_DMG=1
+    DMG_BACKGROUND="$SCRIPT_DIR/Packaging/DMG/background.png"
+    [ -f "$DMG_BACKGROUND" ] || fail "DMG background is missing: $DMG_BACKGROUND"
+else
+    printf 'Warning: create-dmg is not installed; building the plain DMG.\nInstall it for the custom background and Finder layout: brew install create-dmg\n' >&2
+fi
 xcrun --find notarytool >/dev/null
 xcrun --find stapler >/dev/null
 
@@ -94,9 +102,27 @@ printf 'Creating and signing DMG...\n'
 DMG_ROOT="$RUN_DIR/DMGRoot"
 mkdir -p "$DMG_ROOT"
 ditto "$APP" "$DMG_ROOT/DirStat.app"
-ln -s /Applications "$DMG_ROOT/Applications"
 DMG="$RUN_DIR/DirStat-$VERSION.dmg"
-hdiutil create -volname DirStat -srcfolder "$DMG_ROOT" -fs HFS+ -format UDZO "$DMG"
+if [ "$USE_CREATE_DMG" -eq 1 ]; then
+    # The 2x background is 768 x 512 points; allow 28 points for the title bar.
+    # create-dmg creates the Applications shortcut and saves the Finder layout.
+    create-dmg \
+        --volname DirStat \
+        --background "$DMG_BACKGROUND" \
+        --window-pos 200 120 \
+        --window-size 768 540 \
+        --icon-size 128 \
+        --text-size 14 \
+        --icon DirStat.app 199 270 \
+        --hide-extension DirStat.app \
+        --app-drop-link 568 270 \
+        --filesystem HFS+ \
+        --format UDZO \
+        "$DMG" "$DMG_ROOT"
+else
+    ln -s /Applications "$DMG_ROOT/Applications"
+    hdiutil create -volname DirStat -srcfolder "$DMG_ROOT" -fs HFS+ -format UDZO "$DMG"
+fi
 codesign --sign "$CODE_SIGN_IDENTITY" --timestamp \
     --identifier "$BUNDLE_ID.dmg" "$DMG"
 codesign --verify --strict --verbose=2 "$DMG"

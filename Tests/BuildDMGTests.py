@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Copyright 2026 The DirStat Authors.
-# Modified 2026-09-05.
+# Modified 2026-09-06.
 
 """Exercise release success/failure handling without signing keys or uploads."""
 
@@ -52,8 +52,18 @@ elif name == "xcodebuild":
     contents = Path(directory) / "DirStat.app/Contents"
     contents.mkdir(parents=True)
     with (contents / "Info.plist").open("wb") as output:
-        plistlib.dump({"CFBundleShortVersionString": "2.0",
+        plistlib.dump({"CFBundleShortVersionString": "2.1",
                       "CFBundleIdentifier": "com.dirstat.DirStat"}, output)
+elif name == "create-dmg":
+    if mode == "create-dmg-failure":
+        sys.exit(64)
+    root = Path(args[-1])
+    assert sorted(item.name for item in root.iterdir()) == ["DirStat.app"]
+    assert "--volicon" not in args
+    background = Path(args[args.index("--background") + 1])
+    assert background.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
+    assert str(background).endswith("/Packaging/DMG/background.png")
+    Path(args[-2]).write_text("new disk image")
 elif name == "hdiutil" and args[0] == "create":
     root = Path(args[args.index("-srcfolder") + 1])
     assert (root / "DirStat.app/Contents/Info.plist").is_file()
@@ -93,12 +103,16 @@ elif name == "xcrun":
 
 
 class BuildDMGTests(unittest.TestCase):
-    def run_release(self, mode="accepted", env_text=ENV):
+    def run_release(self, mode="accepted", env_text=ENV, create_dmg=False):
         with tempfile.TemporaryDirectory(prefix="dirstat dmg tests ") as directory:
             root = Path(directory)
             project = root / "project with spaces"
             project.mkdir()
             shutil.copy2(PROJECT / "BuildDMG.sh", project)
+            if mode != "missing-background":
+                artwork = project / "Packaging/DMG"
+                artwork.mkdir(parents=True)
+                shutil.copy2(PROJECT / "Packaging/DMG/background.png", artwork)
             if env_text is not None:
                 (project / ".env").write_text(env_text)
             binaries = root / "bin"
@@ -108,14 +122,18 @@ class BuildDMGTests(unittest.TestCase):
             shim.chmod(0o755)
             for tool in ("security", "xcodebuild", "codesign", "hdiutil", "spctl", "xcrun"):
                 (binaries / tool).symlink_to(shim)
+            if create_dmg:
+                (binaries / "create-dmg").symlink_to(shim)
             calls_file = root / "calls.jsonl"
-            env = dict(os.environ, PATH=f"{binaries}:{os.environ['PATH']}",
+            # Exclude Homebrew and other user paths so an installed create-dmg
+            # cannot accidentally mount real images during these tests.
+            env = dict(os.environ, PATH=f"{binaries}:/usr/bin:/bin:/usr/sbin:/sbin",
                        DIRSTAT_TEST_MODE=mode, DIRSTAT_TEST_CALLS=str(calls_file),
                        CODE_SIGN_IDENTITY="inherited identity", APPLE_TEAM_ID="ZZZ9999999",
                        APPLE_ID="inherited@example.com", APPLE_APP_SPECIFIC_PASSWORD="inherited")
             output_dir = project / "build with spaces/Notarized"
             output_dir.mkdir(parents=True)
-            final = output_dir / "DirStat-2.0.dmg"
+            final = output_dir / "DirStat-2.1.dmg"
             final.write_text("previous release")
             result = subprocess.run(["sh", "-x", str(project / "BuildDMG.sh")],
                                     cwd=root, env=env, text=True, capture_output=True)
@@ -150,6 +168,43 @@ class BuildDMGTests(unittest.TestCase):
         self.assertTrue(has_log)
         self.assertEqual(calls[-1][0], "spctl")
         self.assertTrue(any(call[:3] == ["xcrun", "stapler", "validate"] for call in calls))
+
+    def test_missing_create_dmg_warns_and_uses_plain_packaging(self):
+        calls, output, _ = self.run_release()
+        self.assertIn("Warning: create-dmg is not installed", output)
+        self.assertIn("brew install create-dmg", output)
+        self.assertFalse(any(call[0] == "create-dmg" for call in calls))
+        creation = next(call for call in calls if call[:2] == ["hdiutil", "create"])
+        self.assertEqual(creation[creation.index("-fs") + 1], "HFS+")
+        self.assertEqual(creation[creation.index("-format") + 1], "UDZO")
+
+    def test_create_dmg_uses_background_and_layout_before_signing(self):
+        calls, output, _ = self.run_release(create_dmg=True)
+        self.assertNotIn("Warning:", output)
+        creation = next(call for call in calls if call[0] == "create-dmg")
+        self.assertNotIn("--volicon", creation)
+        for flag, values in (("--window-size", ["768", "540"]),
+                             ("--icon", ["DirStat.app", "199", "270"]),
+                             ("--app-drop-link", ["568", "270"]),
+                             ("--hide-extension", ["DirStat.app"]),
+                             ("--icon-size", ["128"]), ("--text-size", ["14"])):
+            start = creation.index(flag) + 1
+            self.assertEqual(creation[start:start + len(values)], values)
+        self.assertFalse(any(call[:2] == ["hdiutil", "create"] for call in calls))
+        signing = next(call for call in calls if call[:2] == ["codesign", "--sign"])
+        submission = next(call for call in calls if call[:3] == ["xcrun", "notarytool", "submit"])
+        self.assertEqual(signing[-1], creation[-2])
+        self.assertEqual(submission[3], creation[-2])
+        self.assertLess(calls.index(creation), calls.index(signing))
+        self.assertLess(calls.index(signing), calls.index(submission))
+
+    def test_styled_packaging_failures_stop_without_upload_or_plain_fallback(self):
+        for mode in ("missing-background", "create-dmg-failure"):
+            with self.subTest(mode=mode):
+                calls, _, _ = self.run_release(mode, create_dmg=True)
+                self.assertFalse(any(call[:2] == ["xcrun", "notarytool"] for call in calls))
+                self.assertFalse(any(call[:2] == ["hdiutil", "create"] for call in calls))
+                self.assertFalse(any(call[:2] == ["codesign", "--sign"] for call in calls))
 
     def test_bad_configuration_stops_before_external_tools(self):
         missing_id = ENV.replace("APPLE_ID='release@example.com'\n", "")

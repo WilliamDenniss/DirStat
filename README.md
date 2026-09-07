@@ -46,6 +46,21 @@ an Applications shortcut, signs the DMG, submits it to Apple, and waits for
 acceptance. It then staples the ticket and verifies the signature, staple, and
 Gatekeeper assessment before saving `build/Notarized/DirStat-<version>.dmg`.
 
+Install the optional packaging tool for the custom Finder background and
+drag-to-Applications layout:
+
+```sh
+brew install create-dmg
+```
+
+When `create-dmg` is on `PATH`, the script uses
+`Packaging/DMG/background.png` and saves the app and Applications shortcut
+positions in the DMG. Styling requires a logged-in macOS session and permission
+for the terminal running the script to control Finder. If `create-dmg` is
+missing, the script prints a warning and the install command, then builds the
+plain DMG with `hdiutil`. A failure from an installed `create-dmg` stops the
+release. Both packaging paths use the same signing and notarization checks.
+
 Set `DIX_BUILD_DIR` and `NOTARY_TIMEOUT` in `.env` to change the output directory
 and wait limit. Relative build paths resolve from the project directory.
 Each attempt retains its build files, submission response, and any available
