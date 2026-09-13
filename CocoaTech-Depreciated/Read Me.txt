@@ -1,0 +1,21 @@
+
+Thanks for downloading the CocoaTech Open Source v3.2!
+
+In this disk image you will find a collection of very powerful and useful Cocoa objects, and you will find instructions and examples demonstrating how to write a plugin for Path Finder.
+
+In the Frameworks folder you will find six frameworks: First there are CocoaTechBase and CocoaTechFoundation.  These frameworks are the heart and soul of Path Finder.  They are a somewhat random assortment of objects, but they are generic enough to be reused an any application.  Next is CocoaTechTerminal.  Create your own Terminal.app in 5 minutes.  It's just an ordinary NSView.  Next is CocoaTechStrings.  I found that I had duplicate strings in my application, frameworks and plugins, so I'm slowly moving all my strings and localizations to one place.  Also new is CocoaTechPreview.  I want to encourage developers to add code to preview more file types.  This is the code used in the Path Finder preview drawer and Preview window.  New for this release is CocoaTechID3.  I took the id3lib and wrapped in an easy to use Cocoa framework.
+
+In Path Finder Plugins folder you will find source code to build plugins for Path Finder with real shipping examples.  The Path Finder "Get Info", "Hex Viewer", "Disk Image" and "Image Converter" are included, plus a sample plugin designed to make it easy for you to get started writing your own plugin.
+
+In the Contextual Menu Plugin folder I have included the source for the Path Finder contextual menu.  This adds a "Show in Path Finder" entry in the Finders contextual menu.  This also shows how to send a reveal AppleEvent to Path Finder, so if you need to do this, just copy and paste the code.
+
+I hope everyone can learn from this code, and I'm really hoping people will take the code and improve it.  Please send me any improvements you make to the code and I will include them in the next release.
+
+The code is license under a BSD style license.  See the License.txt file for details. 
+
+Have fun!
+
+
+Steve Gehrman
+steve@cocoatech.com
+http://www.cocoatech.com/opensource
