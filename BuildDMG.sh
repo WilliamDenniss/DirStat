@@ -68,7 +68,7 @@ esac
 mkdir -p "$BUILD_DIR/Notarized"
 OUTPUT_DIR=$(CDPATH= cd -- "$BUILD_DIR/Notarized" && pwd)
 # Keep each attempt separate so failures preserve both diagnostics and any
-# previously notarized release. Only the final successful DMG is promoted.
+# previously notarized release. Only the final successful artifacts are promoted.
 RUN_DIR=$(mktemp -d "$OUTPUT_DIR/run.XXXXXX")
 trap 'result=$?; if [ "$result" -ne 0 ]; then printf "Build files and diagnostics: %s\n" "$RUN_DIR" >&2; fi' 0
 
@@ -95,8 +95,71 @@ codesign --verify --deep --strict --verbose=2 "$APP"
 VERSION=$(plutil -extract CFBundleShortVersionString raw -o - "$APP/Contents/Info.plist")
 BUNDLE_ID=$(plutil -extract CFBundleIdentifier raw -o - "$APP/Contents/Info.plist")
 case "$VERSION" in
-    ''|*[!A-Za-z0-9._-]*) fail 'The app version contains characters unsuitable for a DMG filename.' ;;
+    ''|*[!A-Za-z0-9._-]*) fail 'The app version contains characters unsuitable for a release filename.' ;;
 esac
+
+notarize() {
+    xcrun notarytool "$@" \
+        --apple-id "$APPLE_ID" \
+        --team-id "$APPLE_TEAM_ID" \
+        --password "$APPLE_APP_SPECIFIC_PASSWORD"
+}
+
+submit_for_notarization() {
+    NOTARY_ITEM=$1
+    NOTARY_LABEL=$2
+    NOTARY_BASENAME=$3
+    NOTARY_SUBMISSION="$RUN_DIR/notary-$NOTARY_BASENAME-submission.json"
+    NOTARY_LOG="$RUN_DIR/notary-$NOTARY_BASENAME-log.json"
+    NOTARY_SUBMIT_EXIT=0
+
+    printf 'Submitting %s to Apple for notarization...\n' "$NOTARY_LABEL"
+    notarize submit "$NOTARY_ITEM" --wait --timeout "${NOTARY_TIMEOUT:-30m}" \
+        --output-format json > "$NOTARY_SUBMISSION" || NOTARY_SUBMIT_EXIT=$?
+    if ! NOTARY_SUBMISSION_ID=$(plutil -extract id raw -o - "$NOTARY_SUBMISSION" 2>/dev/null); then
+        NOTARY_SUBMISSION_ID=
+    fi
+    if ! NOTARY_STATUS=$(plutil -extract status raw -o - "$NOTARY_SUBMISSION" 2>/dev/null); then
+        NOTARY_STATUS=
+    fi
+
+    if [ -n "$NOTARY_SUBMISSION_ID" ]; then
+        printf '%s notarization submission: %s (%s)\n' \
+            "$NOTARY_LABEL" "$NOTARY_SUBMISSION_ID" "${NOTARY_STATUS:-unknown status}"
+        # Save Apple's warnings even on acceptance, and errors on rejection.
+        if ! notarize log "$NOTARY_SUBMISSION_ID" "$NOTARY_LOG"; then
+            printf '%s notarization log is not available yet; submission details: %s\n' \
+                "$NOTARY_LABEL" "$NOTARY_SUBMISSION" >&2
+        fi
+    fi
+    if [ "$NOTARY_SUBMIT_EXIT" -ne 0 ] || [ "$NOTARY_STATUS" != Accepted ]; then
+        fail "$NOTARY_LABEL notarization did not complete successfully (${NOTARY_STATUS:-no status}). See $NOTARY_SUBMISSION and any $NOTARY_LOG."
+    fi
+}
+
+# ZIP files cannot carry a stapled ticket. Submit a temporary ZIP, staple the
+# resulting ticket to the app, then package the stapled app in the release ZIP.
+printf 'Creating app archive for notarization...\n'
+APP_NOTARY_ZIP="$RUN_DIR/DirStat-$VERSION-notary-submission.zip"
+ditto -c -k --sequesterRsrc --keepParent "$APP" "$APP_NOTARY_ZIP"
+submit_for_notarization "$APP_NOTARY_ZIP" 'app archive' app
+
+printf 'Stapling and verifying app notarization...\n'
+xcrun stapler staple "$APP"
+xcrun stapler validate "$APP"
+codesign --verify --deep --strict --verbose=2 "$APP"
+spctl --assess --type execute --verbose=2 "$APP"
+
+printf 'Creating distributable ZIP...\n'
+ZIP="$RUN_DIR/DirStat-$VERSION.zip"
+ditto -c -k --sequesterRsrc --keepParent "$APP" "$ZIP"
+ZIP_VERIFY_ROOT="$RUN_DIR/ZIPVerify"
+mkdir -p "$ZIP_VERIFY_ROOT"
+ditto -x -k "$ZIP" "$ZIP_VERIFY_ROOT"
+ZIP_APP="$ZIP_VERIFY_ROOT/DirStat.app"
+codesign --verify --deep --strict --verbose=2 "$ZIP_APP"
+xcrun stapler validate "$ZIP_APP"
+spctl --assess --type execute --verbose=2 "$ZIP_APP"
 
 printf 'Creating and signing DMG...\n'
 DMG_ROOT="$RUN_DIR/DMGRoot"
@@ -128,42 +191,17 @@ codesign --sign "$CODE_SIGN_IDENTITY" --timestamp \
 codesign --verify --strict --verbose=2 "$DMG"
 hdiutil verify "$DMG"
 
-notarize() {
-    xcrun notarytool "$@" \
-        --apple-id "$APPLE_ID" \
-        --team-id "$APPLE_TEAM_ID" \
-        --password "$APPLE_APP_SPECIFIC_PASSWORD"
-}
+submit_for_notarization "$DMG" DMG dmg
 
-printf 'Submitting DMG to Apple for notarization...\n'
-SUBMISSION="$RUN_DIR/notary-submission.json"
-SUBMIT_EXIT=0
-notarize submit "$DMG" --wait --timeout "${NOTARY_TIMEOUT:-30m}" \
-    --output-format json > "$SUBMISSION" || SUBMIT_EXIT=$?
-if ! SUBMISSION_ID=$(plutil -extract id raw -o - "$SUBMISSION" 2>/dev/null); then
-    SUBMISSION_ID=
-fi
-if ! STATUS=$(plutil -extract status raw -o - "$SUBMISSION" 2>/dev/null); then
-    STATUS=
-fi
-
-if [ -n "$SUBMISSION_ID" ]; then
-    printf 'Notarization submission: %s (%s)\n' "$SUBMISSION_ID" "${STATUS:-unknown status}"
-    # Save Apple's warnings even on acceptance, and errors on rejection.
-    if ! notarize log "$SUBMISSION_ID" "$RUN_DIR/notary-log.json"; then
-        printf 'Notarization log is not available yet; submission details: %s\n' "$SUBMISSION" >&2
-    fi
-fi
-if [ "$SUBMIT_EXIT" -ne 0 ] || [ "$STATUS" != Accepted ]; then
-    fail "Notarization did not complete successfully (${STATUS:-no status}). See $SUBMISSION and any notary-log.json."
-fi
-
-printf 'Stapling and verifying notarization...\n'
+printf 'Stapling and verifying DMG notarization...\n'
 xcrun stapler staple "$DMG"
 xcrun stapler validate "$DMG"
 codesign --verify --strict --verbose=2 "$DMG"
 spctl --assess --type open --context context:primary-signature --verbose=2 "$DMG"
 
 FINAL_DMG="$OUTPUT_DIR/DirStat-$VERSION.dmg"
+FINAL_ZIP="$OUTPUT_DIR/DirStat-$VERSION.zip"
 mv -f "$DMG" "$FINAL_DMG"
-printf 'Notarized DMG: %s\nNotarization logs: %s\n' "$FINAL_DMG" "$RUN_DIR"
+mv -f "$ZIP" "$FINAL_ZIP"
+printf 'Notarized DMG: %s\nNotarized ZIP: %s\nNotarization logs: %s\n' \
+    "$FINAL_DMG" "$FINAL_ZIP" "$RUN_DIR"

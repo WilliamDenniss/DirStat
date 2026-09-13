@@ -12,6 +12,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import zipfile
 
 
 PROJECT = Path(__file__).resolve().parent.parent
@@ -59,6 +60,7 @@ elif name == "create-dmg":
         sys.exit(64)
     root = Path(args[-1])
     assert sorted(item.name for item in root.iterdir()) == ["DirStat.app"]
+    assert (root / "DirStat.app/Contents/_notary_ticket").read_text() == "ticket"
     assert "--volicon" not in args
     background = Path(args[args.index("--background") + 1])
     assert background.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
@@ -67,38 +69,59 @@ elif name == "create-dmg":
 elif name == "hdiutil" and args[0] == "create":
     root = Path(args[args.index("-srcfolder") + 1])
     assert (root / "DirStat.app/Contents/Info.plist").is_file()
+    assert (root / "DirStat.app/Contents/_notary_ticket").read_text() == "ticket"
     assert os.readlink(root / "Applications") == "/Applications"
     assert sorted(item.name for item in root.iterdir()) == ["Applications", "DirStat.app"]
     Path(args[-1]).write_text("new disk image")
 elif name == "codesign" and mode == "signing-failure":
     sys.exit(1)
-elif name == "spctl" and mode == "gatekeeper-failure":
-    sys.exit(1)
+elif name == "spctl":
+    item_kind = "app" if "execute" in args else "dmg"
+    if mode in ("gatekeeper-failure", item_kind + "-gatekeeper-failure"):
+        sys.exit(1)
 elif name == "xcrun":
     if args[0] == "--find":
         print("/fake/" + args[1])
     elif args[:2] == ["notarytool", "submit"]:
-        if mode == "malformed-response":
+        item_kind = "dmg" if args[2].endswith(".dmg") else "app"
+        if mode.startswith("dmg-"):
+            item_mode = mode[4:] if item_kind == "dmg" else "accepted"
+        elif mode.startswith("app-"):
+            item_mode = mode[4:] if item_kind == "app" else "accepted"
+        else:
+            item_mode = mode
+        if item_mode == "malformed-response":
             print("not JSON")
-        elif mode == "submission-failure":
+        elif item_mode == "submission-failure":
             sys.exit(1)
         else:
             status = {"rejected": "Invalid", "rejected-nonzero": "Invalid",
-                      "timeout": "In Progress"}.get(mode, "Accepted")
-            print(json.dumps({"id": "test-submission-id", "status": status}))
-            if mode in ("timeout", "rejected-nonzero"):
+                      "timeout": "In Progress"}.get(item_mode, "Accepted")
+            print(json.dumps({"id": "test-" + item_kind + "-submission-id",
+                              "status": status}))
+            if item_mode in ("timeout", "rejected-nonzero"):
                 sys.exit(1)
     elif args[:2] == ["notarytool", "log"]:
         if mode in ("timeout", "log-unavailable"):
             sys.exit(1)
         Path(args[3]).write_text(json.dumps({"issues": []}))
     elif args[:2] == ["stapler", "staple"]:
-        if mode == "staple-failure":
+        target = Path(args[2])
+        item_kind = "dmg" if target.suffix == ".dmg" else "app"
+        if mode in ("staple-failure", item_kind + "-staple-failure"):
             sys.exit(65)
-        with Path(args[2]).open("a") as output:
-            output.write(" with ticket")
-    elif args[:2] == ["stapler", "validate"] and mode == "validation-failure":
-        sys.exit(65)
+        if item_kind == "app":
+            (target / "Contents/_notary_ticket").write_text("ticket")
+        else:
+            with target.open("a") as output:
+                output.write(" with ticket")
+    elif args[:2] == ["stapler", "validate"]:
+        target = Path(args[2])
+        item_kind = "dmg" if target.suffix == ".dmg" else "app"
+        if mode in ("validation-failure", item_kind + "-validation-failure"):
+            sys.exit(65)
+        if item_kind == "app":
+            assert (target / "Contents/_notary_ticket").read_text() == "ticket"
 '''
 
 
@@ -133,41 +156,57 @@ class BuildDMGTests(unittest.TestCase):
                        APPLE_ID="inherited@example.com", APPLE_APP_SPECIFIC_PASSWORD="inherited")
             output_dir = project / "build with spaces/Notarized"
             output_dir.mkdir(parents=True)
-            final = output_dir / "DirStat-2.1.dmg"
-            final.write_text("previous release")
+            final_dmg = output_dir / "DirStat-2.1.dmg"
+            final_zip = output_dir / "DirStat-2.1.zip"
+            final_dmg.write_text("previous DMG")
+            final_zip.write_text("previous ZIP")
             result = subprocess.run(["sh", "-x", str(project / "BuildDMG.sh")],
                                     cwd=root, env=env, text=True, capture_output=True)
             output = result.stdout + result.stderr
             self.assertNotIn(PASSWORD, output)
             calls = [json.loads(line) for line in calls_file.read_text().splitlines()] \
                 if calls_file.exists() else []
-            logs = list(output_dir.glob("run.*/notary-log.json"))
+            logs = list(output_dir.glob("run.*/notary-*-log.json"))
             if mode in ("accepted", "log-unavailable") and env_text == ENV:
                 self.assertEqual(result.returncode, 0, output)
-                self.assertEqual(final.read_text(), "new disk image with ticket")
+                self.assertEqual(final_dmg.read_text(), "new disk image with ticket")
+                with zipfile.ZipFile(final_zip) as archive:
+                    self.assertIn("DirStat.app/Contents/Info.plist", archive.namelist())
+                    self.assertEqual(archive.read("DirStat.app/Contents/_notary_ticket"), b"ticket")
                 self.assertIn("Notarized DMG:", output)
+                self.assertIn("Notarized ZIP:", output)
             else:
                 self.assertNotEqual(result.returncode, 0, output)
-                self.assertEqual(final.read_text(), "previous release")
+                self.assertEqual(final_dmg.read_text(), "previous DMG")
+                self.assertEqual(final_zip.read_text(), "previous ZIP")
                 self.assertNotIn("Notarized DMG:", output)
-            return calls, output, bool(logs)
+                self.assertNotIn("Notarized ZIP:", output)
+            return calls, output, logs
 
     def test_success_uses_file_credentials_and_checks_ticket_before_promotion(self):
-        calls, _, has_log = self.run_release()
+        calls, _, logs = self.run_release()
         build = next(call for call in calls if call[0] == "xcodebuild")
         for setting in (f"CODE_SIGN_IDENTITY={IDENTITY}", "DEVELOPMENT_TEAM=ABC1234567",
                         "ENABLE_HARDENED_RUNTIME=YES", "CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO",
                         "OTHER_CODE_SIGN_FLAGS=--timestamp", "ARCHS=arm64 x86_64"):
             self.assertIn(setting, build)
         notary_calls = [call for call in calls if call[:2] == ["xcrun", "notarytool"]]
-        self.assertEqual([call[2] for call in notary_calls], ["submit", "log"])
+        self.assertEqual([call[2] for call in notary_calls], ["submit", "log", "submit", "log"])
         for call in notary_calls:
             for flag, value in (("--apple-id", "release@example.com"),
                                 ("--team-id", "ABC1234567"), ("--password", PASSWORD)):
                 self.assertEqual(call[call.index(flag) + 1], value)
-        self.assertTrue(has_log)
+        submissions = [call[3] for call in notary_calls if call[2] == "submit"]
+        self.assertIn("notary-submission.zip", submissions[0])
+        self.assertTrue(submissions[1].endswith(".dmg"))
+        self.assertEqual(len(logs), 2)
         self.assertEqual(calls[-1][0], "spctl")
-        self.assertTrue(any(call[:3] == ["xcrun", "stapler", "validate"] for call in calls))
+        staples = [call[3] for call in calls if call[:3] == ["xcrun", "stapler", "staple"]]
+        self.assertEqual(len(staples), 2)
+        self.assertTrue(staples[0].endswith(".app"))
+        self.assertTrue(staples[1].endswith(".dmg"))
+        validations = [call for call in calls if call[:3] == ["xcrun", "stapler", "validate"]]
+        self.assertEqual(len(validations), 3)
 
     def test_missing_create_dmg_warns_and_uses_plain_packaging(self):
         calls, output, _ = self.run_release()
@@ -192,19 +231,25 @@ class BuildDMGTests(unittest.TestCase):
             self.assertEqual(creation[start:start + len(values)], values)
         self.assertFalse(any(call[:2] == ["hdiutil", "create"] for call in calls))
         signing = next(call for call in calls if call[:2] == ["codesign", "--sign"])
-        submission = next(call for call in calls if call[:3] == ["xcrun", "notarytool", "submit"])
+        submission = next(call for call in calls
+                          if call[:3] == ["xcrun", "notarytool", "submit"]
+                          and call[3].endswith(".dmg"))
         self.assertEqual(signing[-1], creation[-2])
         self.assertEqual(submission[3], creation[-2])
         self.assertLess(calls.index(creation), calls.index(signing))
         self.assertLess(calls.index(signing), calls.index(submission))
 
-    def test_styled_packaging_failures_stop_without_upload_or_plain_fallback(self):
-        for mode in ("missing-background", "create-dmg-failure"):
-            with self.subTest(mode=mode):
-                calls, _, _ = self.run_release(mode, create_dmg=True)
-                self.assertFalse(any(call[:2] == ["xcrun", "notarytool"] for call in calls))
-                self.assertFalse(any(call[:2] == ["hdiutil", "create"] for call in calls))
-                self.assertFalse(any(call[:2] == ["codesign", "--sign"] for call in calls))
+    def test_missing_background_stops_before_upload(self):
+        calls, _, _ = self.run_release("missing-background", create_dmg=True)
+        self.assertFalse(any(call[:2] == ["xcrun", "notarytool"] for call in calls))
+
+    def test_create_dmg_failure_stops_without_dmg_upload_or_plain_fallback(self):
+        calls, _, _ = self.run_release("create-dmg-failure", create_dmg=True)
+        submissions = [call for call in calls if call[:3] == ["xcrun", "notarytool", "submit"]]
+        self.assertEqual(len(submissions), 1)
+        self.assertTrue(submissions[0][3].endswith("notary-submission.zip"))
+        self.assertFalse(any(call[:2] == ["hdiutil", "create"] for call in calls))
+        self.assertFalse(any(call[:2] == ["codesign", "--sign"] for call in calls))
 
     def test_bad_configuration_stops_before_external_tools(self):
         missing_id = ENV.replace("APPLE_ID='release@example.com'\n", "")
@@ -222,21 +267,33 @@ class BuildDMGTests(unittest.TestCase):
     def test_notarization_failures_do_not_staple_or_replace_release(self):
         for mode in ("rejected", "rejected-nonzero", "timeout", "malformed-response", "submission-failure"):
             with self.subTest(mode=mode):
-                calls, _, has_log = self.run_release(mode)
+                calls, _, logs = self.run_release(mode)
                 self.assertFalse(any(call[:2] == ["xcrun", "stapler"] for call in calls))
                 if mode.startswith("rejected"):
-                    self.assertTrue(has_log)
+                    self.assertTrue(logs)
                 if mode in ("malformed-response", "submission-failure"):
                     self.assertFalse(any(call[:3] == ["xcrun", "notarytool", "log"] for call in calls))
 
+    def test_dmg_notarization_failure_preserves_both_previous_artifacts(self):
+        calls, _, logs = self.run_release("dmg-rejected")
+        submissions = [call for call in calls if call[:3] == ["xcrun", "notarytool", "submit"]]
+        self.assertEqual(len(submissions), 2)
+        self.assertTrue(any(call[:3] == ["xcrun", "stapler", "staple"]
+                            and call[3].endswith(".app") for call in calls))
+        self.assertFalse(any(call[:3] == ["xcrun", "stapler", "staple"]
+                             and call[3].endswith(".dmg") for call in calls))
+        self.assertEqual(len(logs), 2)
+
     def test_failed_distribution_checks_preserve_previous_release(self):
-        for mode in ("staple-failure", "validation-failure", "gatekeeper-failure"):
+        for mode in ("app-staple-failure", "app-validation-failure",
+                     "app-gatekeeper-failure", "dmg-staple-failure",
+                     "dmg-validation-failure", "dmg-gatekeeper-failure"):
             with self.subTest(mode=mode):
                 self.run_release(mode)
 
     def test_accepted_submission_can_finish_when_log_is_unavailable(self):
-        _, output, has_log = self.run_release("log-unavailable")
-        self.assertFalse(has_log)
+        _, output, logs = self.run_release("log-unavailable")
+        self.assertFalse(logs)
         self.assertIn("log is not available", output)
 
 

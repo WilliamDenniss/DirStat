@@ -21,7 +21,7 @@ No Apple developer account is required.
 Output: `build/Release/DirStat.app`. Set `DIX_BUILD_DIR` to change the
 build directory used by the script.
 
-## Notarized DMG
+## Notarized DMG and ZIP
 
 Requires Apple Developer Program membership, a **Developer ID Application**
 certificate with its private key installed in an unlocked keychain, and network
@@ -41,10 +41,14 @@ directory regardless of the working directory, and is ignored by Git.
 ```
 
 The script builds a universal Apple Silicon / Intel app with hardened runtime
-and Developer ID signing, creates a compressed DMG containing `DirStat.app` and
-an Applications shortcut, signs the DMG, submits it to Apple, and waits for
-acceptance. It then staples the ticket and verifies the signature, staple, and
-Gatekeeper assessment before saving `build/Notarized/DirStat-<version>.dmg`.
+and Developer ID signing. It submits a temporary app ZIP to Apple, waits for
+acceptance, and staples the resulting ticket to the app. Because notarization
+tickets cannot be stapled directly to ZIP files, as described in
+[Apple's notarization workflow](https://developer.apple.com/documentation/security/customizing-the-notarization-workflow),
+the script then creates and verifies a fresh ZIP containing the stapled app.
+It packages the same app in a compressed DMG, signs and notarizes the DMG, and
+verifies both artifacts before saving
+`build/Notarized/DirStat-<version>.{dmg,zip}`.
 
 Install the optional packaging tool for the custom Finder background and
 drag-to-Applications layout:
@@ -63,12 +67,12 @@ release. Both packaging paths use the same signing and notarization checks.
 
 Set `DIX_BUILD_DIR` and `NOTARY_TIMEOUT` in `.env` to change the output directory
 and wait limit. Relative build paths resolve from the project directory.
-Each attempt retains its build files, submission response, and any available
-Apple log under `build/Notarized/run.*`. A failed attempt leaves an existing
-release DMG untouched. A timeout does not cancel Apple's processing; the saved
-submission ID can be used with `xcrun notarytool info`, `wait`, or `log` to check
-the existing submission. Review the log for warnings and test installation from
-the final DMG before publishing a release.
+Each attempt retains its build files, submission responses, and any available
+Apple logs under `build/Notarized/run.*`. A failed attempt leaves existing
+release artifacts untouched. A timeout does not cancel Apple's processing; the
+saved submission ID can be used with `xcrun notarytool info`, `wait`, or `log`
+to check the existing submission. Review both logs and test installation from
+the final DMG and ZIP before publishing a release.
 
 ## Tests
 
@@ -79,7 +83,7 @@ the final DMG before publishing a release.
 Run in a logged-in macOS session with the pasteboard service available. Tests
 use temporary fixtures and a private pasteboard.
 
-To check the DMG release workflow without signing credentials or network calls:
+To check the release workflow without signing credentials or network calls:
 
 ```sh
 python3 Tests/BuildDMGTests.py
