@@ -10,6 +10,7 @@
 #import "LoadingPanelUpdateState.h"
 #import "VolumeScanProgress.h"
 
+static NSMutableArray *sRetiredLoadingPanelControllers = nil;
 
 // NSProgressIndicator has accumulated several animation and layer-backed
 // rendering behaviours across macOS releases.  Volume progress must be much
@@ -104,6 +105,7 @@
 - (void) initializeItemCountTextField;
 - (void) replaceProgressIndicatorWithDeterminateIndicatorAtFraction: (double) fraction;
 - (void) releaseItemCountTextField;
+- (void) disposeRetiredController;
 - (NSTimeInterval) currentUpdateTime;
 - (void) flushPendingUpdatesAtTime: (NSTimeInterval) currentTime
 						 forceDisplay: (BOOL) forceDisplay;
@@ -129,6 +131,10 @@
     //load Nib with progress panel
 	if ( ![NSBundle loadNibNamed: @"LoadingPanel" owner: self] )
 		NSAssert( NO, @"couldn't load LoadingPanel.nib" );
+	// Own the top-level panel explicitly.  Closing must not synchronously
+	// destroy AppKit view storage that is also queued for end-of-event cleanup.
+	[_loadingPanel retain];
+	[_loadingPanel setReleasedWhenClosed: NO];
 	
 	[self initializeItemCountTextField];
 	[self initializeProgressIndicatorIndeterminate: indeterminate];
@@ -157,6 +163,8 @@
     //load Nib with progress panel
 	if ( ![NSBundle loadNibNamed: @"LoadingPanel" owner: self] )
 		NSAssert( NO, @"couldn't load LoadingPanel.nib" );
+	[_loadingPanel retain];
+	[_loadingPanel setReleasedWhenClosed: NO];
 
 	[self initializeItemCountTextField];
 	[self initializeProgressIndicatorIndeterminate: YES];
@@ -180,7 +188,22 @@
 - (void) dealloc
 {
 	if ( _loadingPanel != nil )
-		[self close];
+	{
+		if ( _retiredAfterCancellation )
+		{
+			NSPanel *loadingPanel = _loadingPanel;
+			[self releaseItemCountTextField];
+			_loadingPanel = nil;
+			_loadingProgressIndicator = nil;
+			_loadingTextField = nil;
+			_loadingCancelButton = nil;
+			[loadingPanel release];
+		}
+		else
+		{
+			[self close];
+		}
+	}
 
 	[_message release];
 	[_updateState release];
@@ -188,44 +211,89 @@
 	[super dealloc];
 }
 
+- (void) retireAfterCancellation
+{
+	NSPanel *loadingPanel = _loadingPanel;
+	if ( loadingPanel == nil || _retiredAfterCancellation )
+		return;
+
+	if ( [loadingPanel isSheet] )
+		[NSApp endSheet: loadingPanel];
+	else if ( _loadingPanelModalSession != 0 )
+	{
+		[[NSApplication sharedApplication] endModalSession: _loadingPanelModalSession];
+		_loadingPanelModalSession = 0;
+	}
+
+	[_loadingProgressIndicator stopAnimation: nil];
+	[loadingPanel orderOut: self];
+	_retiredAfterCancellation = YES;
+
+	// Keep the complete panel graph alive until the autorelease pool for the
+	// event that delivered Cancel has drained. AppKit keeps raw cleanup blocks
+	// for that pool, so destroying the views in the exception handler is unsafe.
+	if ( sRetiredLoadingPanelControllers == nil )
+		sRetiredLoadingPanelControllers = [[NSMutableArray alloc] init];
+	[sRetiredLoadingPanelControllers addObject: self];
+	[self performSelector: @selector(disposeRetiredController)
+			   withObject: nil
+			   afterDelay: 0.0];
+}
+
+- (void) disposeRetiredController
+{
+	[sRetiredLoadingPanelControllers removeObjectIdenticalTo: self];
+}
+
 - (void) close
 {
-	if ( [_loadingPanel isSheet] )
+	NSPanel *loadingPanel = _loadingPanel;
+	if ( loadingPanel == nil )
+		return;
+
+	if ( [loadingPanel isSheet] )
 	{
-		[NSApp endSheet: _loadingPanel];
-		[self releaseItemCountTextField];
-		[_loadingPanel close]; //will be released (panel has style "release when close")
-		
-		_loadingPanel = nil;
-		_loadingProgressIndicator = nil;
-		_loadingTextField = nil;
-		_loadingCancelButton = nil;
+		[NSApp endSheet: loadingPanel];
 	}
 	else
 	{
 		OBPRECONDITION( _loadingPanelModalSession != 0 );
 		[[NSApplication sharedApplication] endModalSession: _loadingPanelModalSession];
 		_loadingPanelModalSession = 0;
-		
-		[self closeNoModalEnd];
 	}
+
+	// NSWindow's close animation outlives this synchronous scanner callback on
+	// current macOS releases.  Releasing a release-when-closed panel here can
+	// consequently leave AppKit animating freed window storage.  This panel is
+	// transient, so ordering it out is the synchronous teardown we need.
+	[_loadingProgressIndicator stopAnimation: nil];
+	[loadingPanel orderOut: self];
+	[self releaseItemCountTextField];
+
+	_loadingPanel = nil;
+	_loadingProgressIndicator = nil;
+	_loadingTextField = nil;
+	_loadingCancelButton = nil;
+	[loadingPanel release];
 }
 
 - (void) closeNoModalEnd
 {
 	//this only works if we startet a modal session for a panel (no sheet)
 	OBPRECONDITION( ![_loadingPanel isSheet] );
-	
+
 	//the sender asked us not to end the modal session (maybe because sender has run into an exception)
 	_loadingPanelModalSession = 0;
+	NSPanel *loadingPanel = _loadingPanel;
+	[_loadingProgressIndicator stopAnimation: nil];
+	[loadingPanel orderOut: self];
 	[self releaseItemCountTextField];
-	
-	[_loadingPanel close]; //will be released (panel has style "release when close")
-	
+
 	_loadingPanel = nil;
     _loadingProgressIndicator = nil;
 	_loadingTextField = nil;
 	_loadingCancelButton = nil;
+	[loadingPanel release];
 }
 
 - (void) enableCancelButton: (BOOL) enable

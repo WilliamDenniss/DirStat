@@ -990,16 +990,17 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
                                           // Handle the error.
                                           // Return YES if the enumeration should continue after the error.
                                           LOG(@"error listing '%@': %@", [url path], error);
-                                          // stop if there is a problem with the directory itself
-                                          if ( [url isEqualToURL: [self fileURL]])
-                                              return NO;
-                                          else
-                                              return YES;
+                                          // Keep this handler capture-free. Foundation retains it
+                                          // for the enumerator's lifetime, and cancellation must not
+                                          // add the root item to that cleanup graph. If the root is
+                                          // unreadable there are no descendants to continue with.
+                                          return YES;
                                       }
                                       ];
     NSUInteger lastEnumLevel = 1;
     BOOL lastItemWasDir = NO;
     FSItem *lastDirItem = nil;
+    BOOL loadingCanceled = NO;
     
     for ( NSURL *currentUrl in dirEnum)
     {
@@ -1032,7 +1033,8 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
             if ( [delegate respondsToSelector: @selector(fsItemEnteringFolder:)]
                 && ![delegate fsItemEnteringFolder: lastDirItem] )
             {
-                [NSException raise: FSItemLoadingCanceledException format: @""];
+                loadingCanceled = YES;
+                break;
             }
         }
         else if ([dirEnum level] < lastEnumLevel )
@@ -1047,11 +1049,15 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
                 if ( [delegate respondsToSelector: @selector(fsItemExittingFolder:)]
                     && ![delegate fsItemExittingFolder: [itemStack lastObject]] )
                 {
-                    [NSException raise: FSItemLoadingCanceledException format: @""];
+                    loadingCanceled = YES;
+                    break;
                 }
 
                 [itemStack removeLastObject];
             }
+
+            if ( loadingCanceled )
+                break;
             
 #ifdef DEBUG
             // .. and check whether the current url resides in that directory
@@ -1087,7 +1093,8 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
             && ![delegate fsItemDidProcessItem: currentItem] )
         {
             [currentItem release];
-            [NSException raise: FSItemLoadingCanceledException format: @""];
+            loadingCanceled = YES;
+            break;
         }
         
         if ( [currentUrl isFirmlink] )
@@ -1114,18 +1121,28 @@ NSString* FSItemLoadingFailedException = @"FSItemLoadingFailedException";
         [currentItem release];
     }
  
-    // signal exiting of remaining folders
-    for ( FSItem * stackItem in [itemStack reverseObjectEnumerator] )
+    // Cancellation must leave Foundation's directory-enumerator frame before
+    // raising the public cancellation exception.  Unwinding directly through
+    // fast enumeration leaves end-of-event cleanup registered with AppKit.
+    if ( !loadingCanceled )
     {
-        //should we cancel the loading?
-        if ( [delegate respondsToSelector: @selector(fsItemExittingFolder:)]
-            && ![delegate fsItemExittingFolder: stackItem] )
+        // signal exiting of remaining folders
+        for ( FSItem * stackItem in [itemStack reverseObjectEnumerator] )
         {
-            [NSException raise: FSItemLoadingCanceledException format: @""];
+            //should we cancel the loading?
+            if ( [delegate respondsToSelector: @selector(fsItemExittingFolder:)]
+                && ![delegate fsItemExittingFolder: stackItem] )
+            {
+                loadingCanceled = YES;
+                break;
+            }
         }
-     }
+    }
     
     [itemStack release];
+
+    if ( loadingCanceled )
+        [NSException raise: FSItemLoadingCanceledException format: @""];
     
 	[self recalculateSize:YES updateParent:NO];
 }

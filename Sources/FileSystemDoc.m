@@ -339,18 +339,22 @@ NSString *OldItem = @"OldItem";
     @catch(NSException *localException)
     {
         LOG( @"exception '%@' occured during directory traversal: %@", [localException name], [localException reason] );
+
+		BOOL loadingWasCanceled = [[localException name] isEqualToString: FSItemLoadingCanceledException]
+			|| [[localException name] isEqualToString: CollectFileKindStatisticsCanceledException];
 		
 		// according to the docu, we should not end a modal session explicitly in the case of an exception
         // but this seems to be no longer true at least on Mac OS 10.13 (even not when using NS_DURING, NS_HANDLER, ..)
 		//[_progressController closeNoModalEnd];
+		if ( loadingWasCanceled )
+			[_progressController retireAfterCancellation];
 		[_progressController release];
 		_progressController = nil;
 		
 		[_rootItem release];
 		_rootItem = nil;
 
-		if ( [[localException name] isEqualToString: FSItemLoadingCanceledException]
-			 || [[localException name] isEqualToString: CollectFileKindStatisticsCanceledException] )
+		if ( loadingWasCanceled )
 		{
 			//loading canceled by user
 		}
@@ -1350,4 +1354,3 @@ NSString *OldItem = @"OldItem";
 
 
 @end
-

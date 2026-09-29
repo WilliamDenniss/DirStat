@@ -14,6 +14,7 @@
 {
 	NSModalSession _loadingPanelModalSession;
 	BOOL _cancelPressed;
+	BOOL _retiredAfterCancellation;
 	NSString *_message;
 	BOOL _progressIsIndeterminate;
 	LoadingPanelUpdateState *_updateState;
@@ -30,6 +31,7 @@
 
 - (void) close;
 - (void) closeNoModalEnd;
+- (void) retireAfterCancellation;
 
 - (void) enableCancelButton: (BOOL) enable; //button is enabled by default
 - (BOOL) cancelPressed;
